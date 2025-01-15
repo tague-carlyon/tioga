@@ -43,7 +43,11 @@ if(BUILD_CUDA_SUPPORT)
   # Load the CUDA cmake variables
   find_package(CUDA REQUIRED)
   # Set architecture flags
-  if((CUDA_VERSION_MAJOR EQUAL 8) OR (CUDA_VERSION_MAJOR GREATER 8))
+  if((CUDA_VERSION_MAJOR EQUAL 12) OR (CUDA_VERSION_MAJOR GREATER 12))
+    set(CUDA_OPTS "-arch=sm_80")
+    list(APPEND CUDA_OPTS "-gencode=arch=compute_80,code=sm_80")
+    list(APPEND CUDA_OPTS "-gencode=arch=compute_70,code=sm_70")
+  elseif((CUDA_VERSION_MAJOR EQUAL 8) OR (CUDA_VERSION_MAJOR GREATER 8))
     set(CUDA_OPTS "-arch=sm_30")
     list(APPEND CUDA_OPTS "-gencode=arch=compute_30,code=sm_30")
     list(APPEND CUDA_OPTS "-gencode=arch=compute_60,code=sm_60")
