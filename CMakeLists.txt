@@ -8,6 +8,7 @@ option(BUILD_GRIDGEN_EXE "Build grid generator code (default: off)" on)
 option(TIOGA_HAS_NODEGID "Support node global IDs (default: on)" on)
 option(TIOGA_ENABLE_TIMERS "Track timing information for TIOGA (default: off)" OFF)
 option(TIOGA_OUTPUT_STATS "Output statistics for TIOGA holecutting (default: off)" OFF)
+option(BUILD_PYTHON "Build python wrapper" on)
 
 find_package(MPI REQUIRED)
 include_directories(${MPI_INCLUDE_PATH})
@@ -59,6 +60,10 @@ endif()
 
 if (BUILD_GRIDGEN_EXE)
   add_subdirectory(gridGen)
+endif()
+
+if (BUILD_PYTHON)
+  add_subdirectory(python)
 endif()
 
 # CMake installation configuration
