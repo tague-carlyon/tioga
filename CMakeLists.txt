@@ -2,31 +2,32 @@ cmake_minimum_required(VERSION 2.8)
 
 project(TIOGA CXX C Fortran)
 
-option(BUILD_SHARED_LIBS "Build shared libraries (default: off)" on)
-option(BUILD_TIOGA_EXE "Build tioga driver code (default: off)" on)
-option(BUILD_GRIDGEN_EXE "Build grid generator code (default: off)" on)
-option(TIOGA_HAS_NODEGID "Support node global IDs (default: on)" on)
+option(BUILD_SHARED_LIBS "Build shared libraries (default: off)" off)
+option(BUILD_TIOGA_EXE "Build tioga driver code (default: off)" off)
+option(BUILD_GRIDGEN_EXE "Build grid generator code (default: off)" off)
+option(TIOGA_HAS_NODEGID "Support node global IDs (default: on)" off)
 option(TIOGA_ENABLE_TIMERS "Track timing information for TIOGA (default: off)" OFF)
 option(TIOGA_OUTPUT_STATS "Output statistics for TIOGA holecutting (default: off)" OFF)
 option(BUILD_PYTHON "Build python wrapper" on)
+option(BUILD_CUDA_SUPPORT "Build with CUDA support" on)
 
 find_package(MPI REQUIRED)
 include_directories(${MPI_INCLUDE_PATH})
 
 # Ensure C++11 standard is enabled
 if (CMAKE_VERSION VERSION_LESS "3.1")
-  set(CMAKE_CXX_FLAGS "-g -rdynamic -std=c++0x ${CMAKE_CXX_FLAGS}")
+  set(CMAKE_CXX_FLAGS "-g -rdynamic -fPIC -std=c++0x ${CMAKE_CXX_FLAGS}")
 else()
   set(CMAKE_CXX_STANDARD 11)
-  set(CMAKE_CXX_FLAGS "-O3 ${CMAKE_CXX_FLAGS}")
+  set(CMAKE_CXX_FLAGS "-O3 -fPIC ${CMAKE_CXX_FLAGS}")
 endif()
 
 # Set some default compilation settings for Fortran compiler
 if (${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")
   set(CMAKE_Fortran_FLAGS
-    "${CMAKE_Fortran_FLAGS} -fbounds-check -fbacktrace -fdefault-real-8 -ffree-line-length-none")
+    "${CMAKE_Fortran_FLAGS} -fbounds-check -fbacktrace -fdefault-real-8 -ffree-line-length-none -fPIC")
 elseif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
-  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -r8 -double_size 128")
+  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -r8 -double_size 128 -fPIC")
 endif()
 
 if (APPLE)
