@@ -231,7 +231,7 @@ PyObject* PyTioga_register_data(PyTioga* self, PyObject *args){
     return Py_BuildValue("i", 1);
   } else {
     self->tg->registerGridData(btag,self->nv,self->xyz,self->iblank,nwbc,nobc,
-			       wbcnode,obcnode,ntypes,self->nv2,self->ncell,self->connptr);
+             wbcnode,obcnode,ntypes,self->nv2,self->ncell,self->connptr);
   } 
 
   if(cell_vol and node_vol){
@@ -275,7 +275,7 @@ PyObject* PyTioga_update(PyTioga* self, PyObject* args){
   int nq, len;
   int interptype = 0; // only row implemented here
   double *q;
-
+  
   MPI_Barrier(self->comm);
   self->tick();
 
@@ -289,6 +289,7 @@ PyObject* PyTioga_update(PyTioga* self, PyObject* args){
   //
   if(PyArray_Check(data)){
     numpy_to_array(data, &q, &len);
+    self->tg->registerSolution(0, q);
     self->tg->dataUpdate(nq,interptype);
   } 
 #ifdef USE_CUDA
