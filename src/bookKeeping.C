@@ -366,6 +366,12 @@ void MeshBlock::initializeInterpList(int ninterp_input)
       }
     TIOGA_FREE(interpList);
   }
+  #ifdef USE_CUDA
+  if( d_interpList){
+    freeGPUInterpList(d_interpList);
+    d_interpList = NULL;
+  }
+  #endif
   ninterp=ninterp_input;   
   interpListSize=ninterp_input;
   interpList=(INTERPLIST *)malloc(sizeof(INTERPLIST)*interpListSize);
@@ -379,7 +385,7 @@ void MeshBlock::initializeInterpList(int ninterp_input)
   if (interp2donor) TIOGA_FREE(interp2donor);
   interp2donor=(int *)malloc(sizeof(int)*nsearch);
   for(i=0;i<nsearch;i++) interp2donor[i]=-1;
-    
+  
 }
 		
 void MeshBlock::findInterpData(int *recid,int irecord,double receptorRes2)

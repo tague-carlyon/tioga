@@ -98,8 +98,7 @@ else()
   target_link_libraries(tioga ${MPI_LIBRARIES} ${CMAKE_DL_LIBS})
 
 endif()
-add_library(tioga ${TIOGA_SOURCES})
-target_link_libraries(tioga ${MPI_LIBRARIES} ${CMAKE_DL_LIBS})
+
 
 if(MPI_COMPILE_FLAGS)
   set_target_properties(tioga PROPERTIES

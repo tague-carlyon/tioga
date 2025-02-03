@@ -26,6 +26,9 @@
 #include <assert.h>
 #include "codetypes.h"
 #include "ADT.h"
+#ifdef USE_CUDA
+#include "cuda_functions.h"
+#endif
 // forward declare to instantiate one of the methods
 class parallelComm;
 class CartGrid;
@@ -72,6 +75,9 @@ class MeshBlock
   int interpListSize;
   INTERPLIST *interpList;   /**< list of donor nodes in my grid, with fractions and information of
                                  who they donate to */ 
+  #ifdef USE_CUDA
+  INTERPLIST *d_interpList;
+  #endif
   int *interp2donor;
 
   INTEGERLIST *cancelList;  /** receptors that need to be cancelled because of */
@@ -160,6 +166,9 @@ class MeshBlock
     res_search=NULL;xsearch=NULL; donorId=NULL;xtag=NULL;
     adt=NULL; cancelList=NULL; userSpecifiedNodeRes=NULL; userSpecifiedCellRes=NULL; nfringe=1;
     mexclude=3;
+    #ifdef USE_CUDA
+    d_interpList=NULL;
+    #endif
     // new vars
     ninterp=ninterp2=interpListSize=interp2ListSize=0;
     ctag=NULL;pointsPerCell=NULL;maxPointsPerCell=0;rxyz=NULL;ntotalPoints=0;rst=NULL;ihigh=0;ipoint=0;
@@ -212,6 +221,11 @@ class MeshBlock
 
   void getInterpolatedSolutionAMR(int *nints,int *nreals,int **intData,double **realData,double *q,
 				  int nvar, int interptype);
+  
+  #ifdef USE_CUDA
+  void getInterpolatedSolution(int *nints,int *nreals,int **intData,double **realData,GPUvec<double> *ve);
+  void updateSolnData(PACKET* p, GPUvec<double> *v);
+  #endif
   
   void checkContainment(int *cellIndex,int adtElement,double *xsearch);
 
