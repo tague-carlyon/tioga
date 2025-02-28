@@ -1,3 +1,6 @@
 build
 TAGS
 old
+*.json
+*.pyc
+.vscode
