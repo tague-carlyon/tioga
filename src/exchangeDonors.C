@@ -21,11 +21,11 @@
 
 void tioga::exchangeDonors(void)
 {
-  int i,j,k,l,m;
+  int i, j, k, l, m;
   int i3;
-  int nsend,nrecv;
-  PACKET *sndPack,*rcvPack;
-  int meshtag,procid,pointid,remoteid;
+  int nsend, nrecv;
+  PACKET *sndPack, *rcvPack;
+  int meshtag, procid, pointid, remoteid;
   double donorRes;
   double *receptorResolution;
   int *donorRecords;
@@ -36,175 +36,161 @@ void tioga::exchangeDonors(void)
   int *icount;
   int *dcount;
   //
-  donorRecords=NULL;
-  icount=NULL;
-  dcount=NULL;
-  receptorResolution=NULL;
-  //
+  donorRecords = NULL;
+  icount = NULL;
+  dcount = NULL;
+  receptorResolution = NULL;
   //
   // get the processor map for sending
   // and receiving
   //
-  pc->getMap(&nsend,&nrecv,&sndMap,&rcvMap);
-  if (nsend == 0) return;  
-  icount=(int *)malloc(sizeof(int)*nsend);
-  dcount=(int *)malloc(sizeof(int)*nsend);
+  pc->getMap(&nsend, &nrecv, &sndMap, &rcvMap);
+  if (nsend == 0) return;
+  icount = (int *)malloc(sizeof(int) * nsend);
+  dcount = (int *)malloc(sizeof(int) * nsend);
   //
   // create packets to send and receive
   // and initialize them to zero
   //
-  sndPack=(PACKET *)malloc(sizeof(PACKET)*nsend);
-  rcvPack=(PACKET *)malloc(sizeof(PACKET)*nrecv);
+  sndPack = (PACKET *)malloc(sizeof(PACKET) * nsend);
+  rcvPack = (PACKET *)malloc(sizeof(PACKET) * nrecv);
   //
-  pc->initPackets(sndPack,rcvPack);
+  pc->initPackets(sndPack, rcvPack);
   //
   // get the data to send now
   //
-  mb->getDonorPacket(sndPack,nsend);
+  mb->getDonorPacket(sndPack, nsend);
   //
   // exchange the data (comm1)
   //
-  pc->sendRecvPackets(sndPack,rcvPack);
+  pc->sendRecvPackets(sndPack, rcvPack);
   //
   // packet received has all the donor data
   // use this to populate link lists per point
   //
   mb->initializeDonorList();
   //
-  for(k=0;k<nrecv;k++)
-    {
-      m=0;
-      for(i=0;i<rcvPack[k].nints/3;i++)
-	{
-	  meshtag=rcvPack[k].intData[m++];
-	  pointid=rcvPack[k].intData[m++];
-	  remoteid=rcvPack[k].intData[m++];
-	  donorRes=rcvPack[k].realData[i];
-	  mb->insertAndSort(pointid,k,meshtag,remoteid,donorRes);
-	}
+  for (k = 0; k < nrecv; k++) {
+    m = 0;
+    for (i = 0; i < rcvPack[k].nints / 3; i++) {
+      meshtag = rcvPack[k].intData[m++];
+      pointid = rcvPack[k].intData[m++];
+      remoteid = rcvPack[k].intData[m++];
+      donorRes = rcvPack[k].realData[i];
+      mb->insertAndSort(pointid, k, meshtag, remoteid, donorRes);
     }
+  }
   //
   // figure out the state of each point now (i.e. if its a hole or fringe or field)
   //
-  mb->processDonors(holeMap,nmesh,&donorRecords,&receptorResolution,&nrecords);
+  mb->processDonors(holeMap, nmesh, &donorRecords, &receptorResolution, &nrecords);
   //
   // free Send and recv data
   //
-  pc->clearPackets(sndPack,rcvPack);
+  pc->clearPackets(sndPack, rcvPack);
   //
   // count number of records in each
   // packet
   //
-  for(i=0;i<nrecords;i++)
-    {
-      k=donorRecords[2*i];
-      sndPack[k].nints++;
-      sndPack[k].nreals++;
-    }
+  for (i = 0; i < nrecords; i++) {
+    k = donorRecords[2 * i];
+    sndPack[k].nints++;
+    sndPack[k].nreals++;
+  }
   //
   // allocate the data containers
   //
-  for(k=0;k<nsend;k++)
-    {
-     sndPack[k].intData=(int *)malloc(sizeof(int)*sndPack[k].nints);
-     sndPack[k].realData=(double *)malloc(sizeof(double)*sndPack[k].nreals);
-     icount[k]=dcount[k]=0;
-    }
+  for (k = 0; k < nsend; k++) {
+    sndPack[k].intData = (int *)malloc(sizeof(int) * sndPack[k].nints);
+    sndPack[k].realData = (double *)malloc(sizeof(double) * sndPack[k].nreals);
+    icount[k] = dcount[k] = 0;
+  }
   //
-  for (i=0;i<nrecords;i++)
-    {
-      k=donorRecords[2*i];
-      sndPack[k].intData[icount[k]++]=donorRecords[2*i+1];
-      sndPack[k].realData[dcount[k]++]=receptorResolution[i];
-    }
+  for (i = 0; i < nrecords; i++) {
+    k = donorRecords[2 * i];
+    sndPack[k].intData[icount[k]++] = donorRecords[2 * i + 1];
+    sndPack[k].realData[dcount[k]++] = receptorResolution[i];
+  }
   //
   // now communicate the data (comm2)
   //
-  pc->sendRecvPackets(sndPack,rcvPack); 
+  pc->sendRecvPackets(sndPack, rcvPack);
   //
   // create the interpolation list now
   //
-  ninterp=0;
-  for(k=0;k<nrecv;k++)
-    ninterp+=rcvPack[k].nints;
+  ninterp = 0;
+  for (k = 0; k < nrecv; k++)
+    ninterp += rcvPack[k].nints;
   //
   mb->initializeInterpList(ninterp);
   //
-  m=0;
-  for(k=0;k<nrecv;k++)
-    for(i=0;i<rcvPack[k].nints;i++)
-      mb->findInterpData(&m,rcvPack[k].intData[i],rcvPack[k].realData[i]);
+  m = 0;
+  for (k = 0; k < nrecv; k++)
+    for (i = 0; i < rcvPack[k].nints; i++)
+      mb->findInterpData(&m, rcvPack[k].intData[i], rcvPack[k].realData[i]);
   mb->set_ninterp(m);
   //
   //printf("process %d has (%d,%d) points to interpolate out %d donors\n",myid,ninterp,m,mb->donorCount);
   //
-  pc->clearPackets(sndPack,rcvPack);
+  pc->clearPackets(sndPack, rcvPack);
   if (donorRecords) free(donorRecords);
-  donorRecords=NULL;
+  donorRecords = NULL;
   //
-  // cancel donors that have conflict 
+  // cancel donors that have conflict
   //
-  mb->getCancellationData(&nrecords,&donorRecords);
+  mb->getCancellationData(&nrecords, &donorRecords);
   //printf("process %d has %d cancelled receptors\n",myid,nrecords);
   //
-  
-  for(i=0;i<nrecords;i++)
-    {
-      k=donorRecords[2*i];
-      sndPack[k].nints++;
-   }
-  for(k=0;k<nsend;k++)
-    {
-      sndPack[k].intData=(int *)malloc(sizeof(int)*sndPack[k].nints);
-      icount[k]=0;
-    }  
-  for(i=0;i<nrecords;i++)
-    {
-      k=donorRecords[2*i];
-      sndPack[k].intData[icount[k]++]=donorRecords[2*i+1];
-    }
+  for (i = 0; i < nrecords; i++) {
+    k = donorRecords[2 * i];
+    sndPack[k].nints++;
+  }
+  for (k = 0; k < nsend; k++) {
+    sndPack[k].intData = (int *)malloc(sizeof(int) * sndPack[k].nints);
+    icount[k] = 0;
+  }
+  for (i = 0; i < nrecords; i++) {
+    k = donorRecords[2 * i];
+    sndPack[k].intData[icount[k]++] = donorRecords[2 * i + 1];
+  }
   //
   // communicate the cancellation data (comm 3)
   //
-  pc->sendRecvPackets(sndPack,rcvPack);
+  pc->sendRecvPackets(sndPack, rcvPack);
   //
-  for(k=0;k<nrecv;k++)
-    {
-      for(i=0;i<rcvPack[k].nints;i++)
-	mb->cancelDonor(rcvPack[k].intData[i]);
-    }
+  for (k = 0; k < nrecv; k++) {
+    for (i = 0; i < rcvPack[k].nints; i++)
+      mb->cancelDonor(rcvPack[k].intData[i]);
+  }
   //
-  if (donorRecords) free(donorRecords);  
-  donorRecords=NULL;
-  pc->clearPackets(sndPack,rcvPack);
+  if (donorRecords) free(donorRecords);
+  donorRecords = NULL;
+  pc->clearPackets(sndPack, rcvPack);
   //
-  mb->getInterpData(&nrecords,&donorRecords);
+  mb->getInterpData(&nrecords, &donorRecords);
   //
-  for(i=0;i<nrecords;i++)
-    {
-      k=donorRecords[2*i];
-      sndPack[k].nints++;
-    }
-  for(k=0;k<nsend;k++)
-    {
-      sndPack[k].intData=(int *)malloc(sizeof(int)*sndPack[k].nints);
-      icount[k]=0;
-    }  
-  for(i=0;i<nrecords;i++)
-    {
-      k=donorRecords[2*i];
-      sndPack[k].intData[icount[k]++]=donorRecords[2*i+1];
-    }
+  for (i = 0; i < nrecords; i++) {
+    k = donorRecords[2 * i];
+    sndPack[k].nints++;
+  }
+  for (k = 0; k < nsend; k++) {
+    sndPack[k].intData = (int *)malloc(sizeof(int) * sndPack[k].nints);
+    icount[k] = 0;
+  }
+  for (i = 0; i < nrecords; i++) {
+    k = donorRecords[2 * i];
+    sndPack[k].intData[icount[k]++] = donorRecords[2 * i + 1];
+  }
   //
   // communicate the final receptor data (comm 4)
   //
-  pc->sendRecvPackets(sndPack,rcvPack);
+  pc->sendRecvPackets(sndPack, rcvPack);
   mb->clearIblanks();
-  for(k=0;k<nrecv;k++)
-    for(i=0;i<rcvPack[k].nints;i++)
+  for (k = 0; k < nrecv; k++)
+    for (i = 0; i < rcvPack[k].nints; i++)
       mb->setIblanks(rcvPack[k].intData[i]);
   //
-  // finished the communication, free all 
+  // finished the communication, free all
   // memory now
   //
   if (donorRecords) free(donorRecords);
@@ -214,17 +200,17 @@ void tioga::exchangeDonors(void)
   //
   // free Send and recv data
   //
-  pc->clearPackets(sndPack,rcvPack);
+  pc->clearPackets(sndPack, rcvPack);
   free(sndPack);
   free(rcvPack);
 }
 
 void tioga::outputStatistics(void)
 {
-  int mstats[3],mstats_global[3];
+  int mstats[3], mstats_global[3];
   mb->getStats(mstats);
-  MPI_Reduce(mstats,mstats_global,3,MPI_INT,MPI_SUM,0,scomm);
-  if (myid==0) {
+  MPI_Reduce(mstats, mstats_global, 3, MPI_INT, MPI_SUM, 0, scomm);
+  if (myid == 0) {
     printf("#tioga -----------------------------------------\n");
     printf("#tioga %12s %12s %12s\n", "receptors", "holes", "issues");
     printf("#tioga %12d %12d %12d\n", mstats_global[1], mstats_global[0], mstats_global[2]);

@@ -22,37 +22,34 @@
 #include <string.h>
 #include "cuda_functions.h"
 
-void MeshBlock::getInterpolatedSolution(int *nints,int *nreals,int **intData,double **realData,
-					GPUvec<double> *vec)
+void MeshBlock::getInterpolatedSolution(int *nints, int *nreals, int **intData, double **realData,
+                                        GPUvec<double> *vec)
 {
   int i;
-  int k,m,inode;
+  int k, m, inode;
   double weight;
-  int icount,dcount;
-  int nvar  = vec->nvar;
+  int icount, dcount;
+  int nvar = vec->nvar;
 
   // If this is the first time doing a dataUpdate since connecting, we
   // need to allocate the interpList on the GPU.
-  if(d_interpList == NULL){
+  if (d_interpList == NULL) {
     allocGPUInterpList(&d_interpList, ninterp, interpList);
   }
 
-  (*nints)=(*nreals)=0;
-  for(i=0;i<ninterp;i++)
-    {
-      if (!interpList[i].cancel)
-  	{
-  	  (*nints)++;
-  	  (*nreals)=(*nreals)+nvar;
-  	}
+  (*nints) = (*nreals) = 0;
+  for (i = 0; i < ninterp; i++) {
+    if (!interpList[i].cancel) {
+      (*nints)++;
+      (*nreals) = (*nreals) + nvar;
     }
-  if ((*nints)==0) return;
+  }
+  if ((*nints) == 0) return;
 
   interpolateVectorGPU(vec, (*nints), (*nreals), ninterp, intData, realData, d_interpList);
-
 }
 
 #endif
-	   
-    
-      
+
+
+

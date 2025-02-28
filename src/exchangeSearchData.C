@@ -21,55 +21,53 @@
 
 void tioga::exchangeSearchData(void)
 {
-  int i,j,k,l,m;
-  int icount,dcount,tcount;
-  int nsend,nrecv;
-  PACKET *sndPack,*rcvPack;
+  int i, j, k, l, m;
+  int icount, dcount, tcount;
+  int nsend, nrecv;
+  PACKET *sndPack, *rcvPack;
   int *sndMap;
   int *rcvMap;
   //
   // get the processor map for sending
   // and receiving
   //
-  pc->getMap(&nsend,&nrecv,&sndMap,&rcvMap);
+  pc->getMap(&nsend, &nrecv, &sndMap, &rcvMap);
   //
   // create packets to send and receive
   // and initialize them to zero
   //
-  sndPack=(PACKET *)malloc(sizeof(PACKET)*nsend);
-  rcvPack=(PACKET *)malloc(sizeof(PACKET)*nrecv);
+  sndPack = (PACKET *)malloc(sizeof(PACKET) * nsend);
+  rcvPack = (PACKET *)malloc(sizeof(PACKET) * nrecv);
   //
-  for(i=0;i<nsend;i++)     
-    {
-      sndPack[i].nints=sndPack[i].nreals=0;
-      sndPack[i].intData=NULL;
-      sndPack[i].realData=NULL;
-    }
+  for (i = 0; i < nsend; i++) {
+    sndPack[i].nints = sndPack[i].nreals = 0;
+    sndPack[i].intData = NULL;
+    sndPack[i].realData = NULL;
+  }
   //
-  for(i=0;i<nrecv;i++)     
-    {
-      rcvPack[i].nints=rcvPack[i].nreals=0;
-      rcvPack[i].intData=NULL;
-      rcvPack[i].realData=NULL;
-    }
+  for (i = 0; i < nrecv; i++) {
+    rcvPack[i].nints = rcvPack[i].nreals = 0;
+    rcvPack[i].intData = NULL;
+    rcvPack[i].realData = NULL;
+  }
   //
   // now get data for each packet
   //
-  for(k=0;k<nsend;k++)
+  for (k = 0; k < nsend; k++)
     mb->getQueryPoints(&obblist[k],
-		       &sndPack[k].nints,&sndPack[k].intData,
-		       &sndPack[k].nreals,&sndPack[k].realData);
+                       &sndPack[k].nints, &sndPack[k].intData,
+                       &sndPack[k].nreals, &sndPack[k].realData);
   //
   // exchange the data
   //
-  pc->sendRecvPackets(sndPack,rcvPack);
+  pc->sendRecvPackets(sndPack, rcvPack);
   //
   // now assort the data into the search
   // list arrays
   //
-  mb->nsearch=0;
-  for(k=0;k<nrecv;k++)
-    mb->nsearch+=rcvPack[k].nints;
+  mb->nsearch = 0;
+  for (k = 0; k < nrecv; k++)
+    mb->nsearch += rcvPack[k].nints;
   //
   // if these were already allocated
   // get rid of them
@@ -81,44 +79,40 @@ void tioga::exchangeSearchData(void)
   //
   // allocate query point storage
   //
-  mb->xsearch=(double *)malloc(sizeof(double)*3*mb->nsearch);
-  mb->isearch=(int *)malloc(2*sizeof(int)*mb->nsearch);
-  mb->donorId=(int *)malloc(sizeof(int)*mb->nsearch);
-  mb->tagsearch=(int *)malloc(sizeof(int)*mb->nsearch);
+  mb->xsearch = (double *)malloc(sizeof(double) * 3 * mb->nsearch);
+  mb->isearch = (int *)malloc(2 * sizeof(int) * mb->nsearch);
+  mb->donorId = (int *)malloc(sizeof(int) * mb->nsearch);
+  mb->tagsearch = (int *)malloc(sizeof(int) * mb->nsearch);
   //
   // now fill the query point arrays
   //
-  icount=0;
-  dcount=0;
-  tcount=0;
-  for(k=0;k<nrecv;k++)
-    {
-      l=0;
-      for(j=0;j<rcvPack[k].nints;j++)
-	{
-	  mb->isearch[icount++]=k;
-	  mb->isearch[icount++]=rcvPack[k].intData[j];	  
-	  mb->xsearch[dcount++]=rcvPack[k].realData[l++];
-	  mb->xsearch[dcount++]=rcvPack[k].realData[l++];
-	  mb->xsearch[dcount++]=rcvPack[k].realData[l++];
-          mb->tagsearch[tcount++]=obblist[k].meshtag;
-	}
+  icount = 0;
+  dcount = 0;
+  tcount = 0;
+  for (k = 0; k < nrecv; k++) {
+    l = 0;
+    for (j = 0; j < rcvPack[k].nints; j++) {
+      mb->isearch[icount++] = k;
+      mb->isearch[icount++] = rcvPack[k].intData[j];
+      mb->xsearch[dcount++] = rcvPack[k].realData[l++];
+      mb->xsearch[dcount++] = rcvPack[k].realData[l++];
+      mb->xsearch[dcount++] = rcvPack[k].realData[l++];
+      mb->tagsearch[tcount++] = obblist[k].meshtag;
     }
-  for(i=0;i<nsend;i++)
-    {
-      if (sndPack[i].nints > 0) free(sndPack[i].intData);
-      if (sndPack[i].nreals >0) free(sndPack[i].realData);
-    }
-  for(i=0;i<nrecv;i++)
-    {
-      if (rcvPack[i].nints > 0) free(rcvPack[i].intData);
-      if (rcvPack[i].nreals >0) free(rcvPack[i].realData);
-    }
+  }
+  for (i = 0; i < nsend; i++) {
+    if (sndPack[i].nints > 0) free(sndPack[i].intData);
+    if (sndPack[i].nreals > 0) free(sndPack[i].realData);
+  }
+  for (i = 0; i < nrecv; i++) {
+    if (rcvPack[i].nints > 0) free(rcvPack[i].intData);
+    if (rcvPack[i].nreals > 0) free(rcvPack[i].realData);
+  }
   free(sndPack);
   free(rcvPack);
   //printf("%d %d\n",myid,mb->nsearch);
 }
-  
+
 //
 // routine for extra query points
 // have to unify both routines here 
@@ -126,57 +120,55 @@ void tioga::exchangeSearchData(void)
 //
 void tioga::exchangePointSearchData(void)
 {
-  int i,j,k,l,m;
-  int icount,dcount;
-  int nsend,nrecv;
-  PACKET *sndPack,*rcvPack;
+  int i, j, k, l, m;
+  int icount, dcount;
+  int nsend, nrecv;
+  PACKET *sndPack, *rcvPack;
   int *sndMap;
   int *rcvMap;
   //
   // get the processor map for sending
   // and receiving
   //
-  pc->getMap(&nsend,&nrecv,&sndMap,&rcvMap);
+  pc->getMap(&nsend, &nrecv, &sndMap, &rcvMap);
   //
   // create packets to send and receive
   // and initialize them to zero
   //
-  sndPack=(PACKET *)malloc(sizeof(PACKET)*nsend);
-  rcvPack=(PACKET *)malloc(sizeof(PACKET)*nrecv);
+  sndPack = (PACKET *)malloc(sizeof(PACKET) * nsend);
+  rcvPack = (PACKET *)malloc(sizeof(PACKET) * nrecv);
   //
-  for(i=0;i<nsend;i++)     
-    {
-      sndPack[i].nints=sndPack[i].nreals=0;
-      sndPack[i].intData=NULL;
-      sndPack[i].realData=NULL;
-    }
+  for (i = 0; i < nsend; i++) {
+    sndPack[i].nints = sndPack[i].nreals = 0;
+    sndPack[i].intData = NULL;
+    sndPack[i].realData = NULL;
+  }
   //
-  for(i=0;i<nrecv;i++)     
-    {
-      rcvPack[i].nints=rcvPack[i].nreals=0;
-      rcvPack[i].intData=NULL;
-      rcvPack[i].realData=NULL;
-    }
+  for (i = 0; i < nrecv; i++) {
+    rcvPack[i].nints = rcvPack[i].nreals = 0;
+    rcvPack[i].intData = NULL;
+    rcvPack[i].realData = NULL;
+  }
   //
   // now get data for each packet
   //
-  for(k=0;k<nsend;k++)
+  for (k = 0; k < nsend; k++)
     mb->getExtraQueryPoints(&obblist[k],
-			    &sndPack[k].nints,&sndPack[k].intData,
-			    &sndPack[k].nreals,&sndPack[k].realData);
+                            &sndPack[k].nints, &sndPack[k].intData,
+                            &sndPack[k].nreals, &sndPack[k].realData);
   MPI_Barrier(scomm);
   //if (myid==0) printf("AAAAA\n");
   //
   // exchange the data
   //
-  pc->sendRecvPackets(sndPack,rcvPack);
+  pc->sendRecvPackets(sndPack, rcvPack);
   //
   // now assort the data into the search
   // list arrays
   //
-  mb->nsearch=0;
-  for(k=0;k<nrecv;k++)
-    mb->nsearch+=rcvPack[k].nints;
+  mb->nsearch = 0;
+  for (k = 0; k < nrecv; k++)
+    mb->nsearch += rcvPack[k].nints;
   //
   // if these were already allocated
   // get rid of them
@@ -188,39 +180,35 @@ void tioga::exchangePointSearchData(void)
   //
   // allocate query point storage
   //
-  mb->xsearch=(double *)malloc(sizeof(double)*3*mb->nsearch);
-  mb->isearch=(int *)malloc(2*sizeof(int)*mb->nsearch);
-  mb->donorId=(int *)malloc(sizeof(int)*mb->nsearch);
-  mb->rst=(double *) malloc(sizeof(double)*3*mb->nsearch);
+  mb->xsearch = (double *)malloc(sizeof(double) * 3 * mb->nsearch);
+  mb->isearch = (int *)malloc(2 * sizeof(int) * mb->nsearch);
+  mb->donorId = (int *)malloc(sizeof(int) * mb->nsearch);
+  mb->rst = (double *)malloc(sizeof(double) * 3 * mb->nsearch);
   //
   // now fill the query point arrays
   //
-  icount=0;
-  dcount=0;
-  for(k=0;k<nrecv;k++)
-    {
-      l=0;
-      for(j=0;j<rcvPack[k].nints;j++)
-	{
-	  mb->isearch[icount++]=k;
-	  mb->isearch[icount++]=rcvPack[k].intData[j];	  
-	  mb->xsearch[dcount++]=rcvPack[k].realData[l++];
-	  mb->xsearch[dcount++]=rcvPack[k].realData[l++];
-	  mb->xsearch[dcount++]=rcvPack[k].realData[l++];
-	}
+  icount = 0;
+  dcount = 0;
+  for (k = 0; k < nrecv; k++) {
+    l = 0;
+    for (j = 0; j < rcvPack[k].nints; j++) {
+      mb->isearch[icount++] = k;
+      mb->isearch[icount++] = rcvPack[k].intData[j];
+      mb->xsearch[dcount++] = rcvPack[k].realData[l++];
+      mb->xsearch[dcount++] = rcvPack[k].realData[l++];
+      mb->xsearch[dcount++] = rcvPack[k].realData[l++];
     }
-  for(i=0;i<nsend;i++)
-    {
-      if (sndPack[i].nints > 0) free(sndPack[i].intData);
-      if (sndPack[i].nreals >0) free(sndPack[i].realData);
-    }
-  for(i=0;i<nrecv;i++)
-    {
-      if (rcvPack[i].nints > 0) free(rcvPack[i].intData);
-      if (rcvPack[i].nreals >0) free(rcvPack[i].realData);
-    }
+  }
+  for (i = 0; i < nsend; i++) {
+    if (sndPack[i].nints > 0) free(sndPack[i].intData);
+    if (sndPack[i].nreals > 0) free(sndPack[i].realData);
+  }
+  for (i = 0; i < nrecv; i++) {
+    if (rcvPack[i].nints > 0) free(rcvPack[i].intData);
+    if (rcvPack[i].nreals > 0) free(rcvPack[i].realData);
+  }
   free(sndPack);
   free(rcvPack);
   //printf("%d %d\n",myid,mb->nsearch);
 }
-  
+

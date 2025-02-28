@@ -81,7 +81,7 @@ void ADT::buildADT(int d, int nelements,double *elementBbox)
        for(i=0;i<ndim/2;i++)
        {
 	 i2=2*i+1;
-	 adtExtents[i2]=max(adtExtents[i2],coord[j6+i+ndim/2]);
+	 adtExtents[i2]=min(adtExtents[i2],coord[j6+i+ndim/2]);
        }
    }
   //

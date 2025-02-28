@@ -22,18 +22,18 @@
 #define TIOGA_CODETYPES_H
 
 #define MPICH_SKIP_MPICXX
-#include<stdio.h>
-#include<stdlib.h>
-#include<math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 #include "mpi.h"
 /*====================================================================*/
 /*  Floating point definition                                         */
 /*====================================================================*/
-# define REAL double
+#define REAL double
 /*====================================================================*/
-/*  Base for indexing (0 or 1)
+/*  Base for indexing (0 or 1)                                        */
 /*====================================================================*/
-# define BASE 1
+#define BASE 1
 
 /*====================================================================*/
 /*  Define arithmetic constants                                       */
@@ -55,32 +55,32 @@
 #define NFRINGE            3
 #define NVAR               6
 /*==================================================================*/
-/* inline debugging tools                                             */
+/* inline debugging tools                                           */
 /*==================================================================*/
-# define tracei(x)  printf("#tioga:\t"#x" =%d\n",x);
-# define traced(x)  printf("#tioga:\t"#x" =%.16e\n",x);
-# define min(x,y)  (x) < (y) ? (x) : (y)
-# define max(x,y)  (x) > (y) ? (x) : (y)
-# define debug(x,y)  printf("#tioga:\t"#x"=%d,"#y"=%d\n",x,y);
-# define stdwrite(x) if (myid==0) printf("#tioga:\t"#x"\n");
-# define dstr(x) printf("#tioga:\t"#x"\n");
-# define ditch(x,y) {dstr(x); tracei(y); MPI_Abort(MPI_COMM_WORLD,ierr);}
+#define tracei(x)  printf("#tioga:\t"#x" =%d\n",x);
+#define traced(x)  printf("#tioga:\t"#x" =%.16e\n",x);
+#define min(x,y)  (x) < (y) ? (x) : (y)
+#define max(x,y)  (x) > (y) ? (x) : (y)
+#define debug(x,y)  printf("#tioga:\t"#x"=%d,"#y"=%d\n",x,y);
+#define stdwrite(x) if (myid==0) printf("#tioga:\t"#x"\n");
+#define dstr(x) printf("#tioga:\t"#x"\n");
+#define ditch(x,y) {dstr(x); tracei(y); MPI_Abort(MPI_COMM_WORLD,ierr);}
 /*====================================================================*/
 /*  Numerical Tools                                                   */
 /*====================================================================*/
 #define Sign(a1,a2)\
-        (((a2) < ZERO)? - fabs(a1): fabs(a1))
+  (((a2) < ZERO)? - fabs(a1): fabs(a1))
 #define Max(a1,a2)\
-        (((a1) >= (a2))? (a1): (a2))
+  (((a1) >= (a2))? (a1): (a2))
 #define Min(a1,a2)\
-        (((a1) <= (a2))? (a1): (a2))
+  (((a1) <= (a2))? (a1): (a2))
 #define Abs(aa)\
-        (((aa) >= 0)? (aa): -(aa))
+  (((aa) >= 0)? (aa): -(aa))
 #define Round(aa)\
-        (int) ((fabs((aa) - floor(aa)) >= HALF)? ceil(aa): floor(aa))
+  (int) ((fabs((aa) - floor(aa)) >= HALF)? ceil(aa): floor(aa))
 #define swap(a,b) { a=a+b;b=a-b;a=a-b;}
 /*********************************************************************/
-/* Code specific types
+/* Code specific types                                               */
 /*********************************************************************/
 typedef struct HOLEMAP
 {
@@ -91,14 +91,14 @@ typedef struct HOLEMAP
   double extents[6];
 } HOLEMAP;
 
-
 typedef struct OBB
 {
   double xc[3];
   double dxc[3];
   double vec[3][3];
   int meshtag;
-}OBB;
+} OBB;
+
 typedef struct DONORLIST
 {
   int donorData[3];
@@ -143,10 +143,10 @@ typedef struct INTEGERLIST
 
 typedef struct INTEGERLIST2
 {
-  int intDataSize,realDataSize;
+  int intDataSize, realDataSize;
   int *intData;
   double *realData;
   struct INTEGERLIST2 *next;
-}INTEGERLIST2; 
+} INTEGERLIST2; 
 
 #endif

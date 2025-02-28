@@ -40,8 +40,7 @@ class CartBlock
  public:
   CartBlock() { global_id=0;dims[0]=dims[1]=dims[2]=0;ibl=NULL;q=NULL;interpListSize=0;donorList=NULL;interpList=NULL;};
   ~CartBlock() { clearLists();};
-  void registerData(int local_id_in,int global_id_in,int *iblankin,double *qin)
-  {
+  void registerData(int local_id_in,int global_id_in,int *iblankin,double *qin) {
     local_id=local_id_in;
     global_id=global_id_in;
     ibl=iblankin;

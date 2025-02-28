@@ -60,31 +60,28 @@ void buildADTrecursion(double *coord,double *adtReals,double *adtWork,int *adtIn
     // find minimum and maximum bounds of the elements
     // contained in this leaf
     //
-    for(i=0;i<nd;i++)
-      {
-	adtReals[ndim*(*adtCount)+i]=BIGVALUE;
-	adtReals[ndim*(*adtCount)+i+nd]=-BIGVALUE;
-      }
+    for(i=0;i<nd;i++) {
+      adtReals[ndim*(*adtCount)+i]=BIGVALUE;
+      adtReals[ndim*(*adtCount)+i+nd]=-BIGVALUE;
+    }
     //
     for(i=0;i<nav;i++)
-      for(j=0;j<nd;j++)
-	{
-	  ii=ndim*(*adtCount)+j;
-	  iip=ii+nd;
-	  jj=ndim*elementsAvailable[i]+j;
-	  jjp=jj+nd;
-	  //
-	  adtReals[ii]=min(adtReals[ii],coord[jj]);
-	  adtReals[iip]=max(adtReals[iip],coord[jjp]);
-	}
+      for(j=0;j<nd;j++) {
+        ii=ndim*(*adtCount)+j;
+        iip=ii+nd;
+        jj=ndim*elementsAvailable[i]+j;
+        jjp=jj+nd;
+        //
+        adtReals[ii]=min(adtReals[ii],coord[jj]);
+        adtReals[iip]=max(adtReals[iip],coord[jjp]);
+	    }
     //
     // specify that the new element is the child of parent
     // unless root
     //
-    if (side > 0) 
-      {
-	adtIntegers[4*parent+side]=elementsAvailable[nleft-1];
-      }
+    if (side > 0) {
+	    adtIntegers[4*parent+side]=elementsAvailable[nleft-1];
+    }
     parentToChild=*adtCount;
     //
     // build the left side of the tree

@@ -90,7 +90,7 @@ class MeshBlock
   int nreceptorCellsCart;
   int *ctag_cart;
   int *pickedCart;
- 	
+     
  public :
   int ntotalPointsCart;
   double *rxyzCart;
@@ -160,11 +160,11 @@ class MeshBlock
   void writeFlowFile(int bid,double *q,int nvar,int type);
   
   void setData(int btag,int nnodesi,double *xyzi, int *ibli,int nwbci, int nobci, 
-	       int *wbcnodei,int *obcnodei,
-	       int ntypesi, int *nvi, int *nci, int **vconni);
+           int *wbcnodei,int *obcnodei,
+           int ntypesi, int *nvi, int *nci, int **vconni);
 
   void setResolutions(double *nres,double *cres);    
-	       
+           
   void search();
 
   void writeOBB(int bid);
@@ -176,14 +176,14 @@ class MeshBlock
   int getNinterp(void) {return ninterp;};
 
   void getInterpolatedSolution(int *nints,int *nreals,int **intData,double **realData,double *q,
-			       int nvar, int interptype);
+                   int nvar, int interptype);
 #ifdef USE_CUDA
   void getInterpolatedSolution(int *nints,int *nreals,int **intData,double **realData,GPUvec<double> *ve);
   void updateSolnData(PACKET* p, GPUvec<double> *v);
 #endif
 
   void getInterpolatedSolutionAMR(int *nints,int *nreals,int **intData,double **realData,double *q,
-				  int nvar, int interptype);
+                  int nvar, int interptype);
   
   void checkContainment(int *cellIndex,int adtElement,double *xsearch);
 
@@ -192,7 +192,7 @@ class MeshBlock
   void markWallBoundary(int *sam,int nx[3],double extents[6]);
 
   void getQueryPoints(OBB *obb,int *nints,int **intData,int *nreals,
-		      double **realData);
+              double **realData);
   
 
   /** routines that do book keeping */
@@ -204,7 +204,7 @@ class MeshBlock
   void insertAndSort(int pointid,int senderid,int meshtag, int remoteid, double donorRes);
   
   void processDonors(HOLEMAP *holemap, int nmesh,int **donorRecords,double **receptorResolution,
-		     int *nrecords);
+             int *nrecords);
 
   void initializeInterpList(int ninterp_input);
   
@@ -240,10 +240,10 @@ class MeshBlock
     iblank_cell=iblank_cell_input;
   }
   void setcallback(void (*f1)(int*, int*),
-		    void (*f2)(int *,int *,double *),
-		    void (*f3)(int *,double *,int *,double *),
-		    void (*f4)(int *,double *,int *,int *,double *,double *,int *),
-		   void (*f5)(int *,int *,double *,int *,int*,double *))
+            void (*f2)(int *,int *,double *),
+            void (*f3)(int *,double *,int *,double *),
+            void (*f4)(int *,double *,int *,int *,double *,double *,int *),
+           void (*f5)(int *,int *,double *,int *,int*,double *))
   {
     get_nodes_per_cell=f1;
     get_receptor_nodes=f2;
@@ -253,7 +253,7 @@ class MeshBlock
   }
 
   void setp4estcallback(void (*f1)(double *,int *,int *,int *),
-			void (*f2)(int *,int *))
+            void (*f2)(int *,int *))
   {
     p4estsearchpt=f1;
     check_intersect_p4est=f2;
@@ -262,12 +262,12 @@ class MeshBlock
   void writeCellFile(int);
   void getInternalNodes(void);
   void getExtraQueryPoints(OBB *obb,int *nints,int **intData,int *nreals,
-		      double **realData);
+              double **realData);
   void processPointDonors(void);
   void getInterpolatedSolutionAtPoints(int *nints,int *nreals,int **intData,
-				       double **realData,
-				       double *q,
-				       int nvar, int interptype);
+                       double **realData,
+                       double *q,
+                       int nvar, int interptype);
   void updatePointData(double *q,double *qtmp,int nvar,int interptype);
   void outputOrphan(FILE *fp,int i) 
   {
@@ -281,9 +281,9 @@ class MeshBlock
   void getiBlankCell(int *iblank_out)
   {
     for(int j=0;j<ncells;j++)
-      {
-	iblank_out[j]=iblank_cell[j];
-      }
+    {
+      iblank_out[j]=iblank_cell[j];
+    }
   }
   
 };

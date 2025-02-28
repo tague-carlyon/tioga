@@ -34,9 +34,8 @@
 #include "cuda_functions.h"
 #endif
 
-class tioga
-{
- private :
+class tioga {
+private:
   int nblocks;
   int ncart;
   MeshBlock *mb;
@@ -50,31 +49,43 @@ class tioga
   int isym;
   int ierr;
   int mytag;
-  int myid,numprocs;
+  int myid, numprocs;
   int *sendCount;
   int *recvCount;
   OBB *obblist;
   int iorphanPrint;
 
- public:
+public:
   int ihigh;
   int ihighGlobal;
   int iamrGlobal;
   /** basic constuctor */
-  tioga() { mb = NULL; cg=NULL; cb=NULL; 
-    holeMap=NULL; pc=NULL; sendCount=NULL; recvCount=NULL;
-    obblist=NULL; isym=2;ihigh=0;nblocks=0;ncart=0;ihighGlobal=0;iamrGlobal=0;};
- 
+  tioga() {
+    mb = NULL;
+    cg = NULL;
+    cb = NULL;
+    holeMap = NULL;
+    pc = NULL;
+    sendCount = NULL;
+    recvCount = NULL;
+    obblist = NULL;
+    isym = 2;
+    ihigh = 0;
+    nblocks = 0;
+    ncart = 0;
+    ihighGlobal = 0;
+    iamrGlobal = 0;
+  }
+
   /** basic destructor */
-  ~tioga(); 
-  
+  ~tioga();
+
   /** set communicator */
-  void setCommunicator(MPI_Comm communicator,int id_proc,int nprocs);
+  void setCommunicator(MPI_Comm communicator, int id_proc, int nprocs);
 
   /** registerGrid data */
-
-  void registerGridData(int btag,int nnodes,double *xyz,int *ibl, int nwbc,int nobc,
-			       int *wbcnode,int *obcnode,int ntypes, int *nv, int *nc, int **vconn);
+  void registerGridData(int btag, int nnodes, double *xyz, int *ibl, int nwbc, int nobc,
+                        int *wbcnode, int *obcnode, int ntypes, int *nv, int *nc, int **vconn);
 
   void profile(void);
 
@@ -85,87 +96,73 @@ class tioga
   void exchangePointSearchData(void);
 
   void exchangeDonors(void);
-    
-  /** perform overset grid connectivity */
 
+  /** perform overset grid connectivity */
   void performConnectivity(void);
   void performConnectivityHighOrder(void);
   void performConnectivityAMR(void);
 
   /** update data */
-
-  void dataUpdate(int nvar,double *q,int interptype) ;
+  void dataUpdate(int nvar, double *q, int interptype);
 #ifdef USE_CUDA
-  void dataUpdate(GPUvec<double> *vec) ;
+  void dataUpdate(GPUvec<double> *vec);
 #endif
 
-  void dataUpdate_AMR(int nvar,double *q,int interptype) ;
-  
-  void dataUpdate_highorder(int nvar,double *q,int interptype) ;
+  void dataUpdate_AMR(int nvar, double *q, int interptype);
+
+  void dataUpdate_highorder(int nvar, double *q, int interptype);
 
   /** get hole map for each mesh */
- 
   void getHoleMap(void);
 
   /** output HoleMaps */
-  
   void outputHoleMap(void);
 
-  void writeData(int nvar,double *q,int interptype);
+  void writeData(int nvar, double *q, int interptype);
 
   void getDonorCount(int *dcount, int *fcount);
-  
-  void getDonorInfo(int *receptors,int *indices,double *frac,int *dcount);
+
+  void getDonorInfo(int *receptors, int *indices, double *frac, int *dcount);
+
   /** set symmetry bc */
-  void setSymmetry(int syminput) { isym=syminput;};
+  void setSymmetry(int syminput) { isym = syminput; }
+
   /** set resolutions for nodes and cells */
-  void setResolutions(double *nres,double *cres)
-  { mb->setResolutions(nres,cres);}    
+  void setResolutions(double *nres, double *cres) { mb->setResolutions(nres, cres); }
 
-  void set_cell_iblank(int *iblank_cell)
-  {
-   mb->set_cell_iblank(iblank_cell);
+  void set_cell_iblank(int *iblank_cell) { mb->set_cell_iblank(iblank_cell); }
+
+  void setcallback(void (*f1)(int *, int *),
+                   void (*f2)(int *, int *, double *),
+                   void (*f3)(int *, double *, int *, double *),
+                   void (*f4)(int *, double *, int *, int *, double *, double *, int *),
+                   void (*f5)(int *, int *, double *, int *, int *, double *)) {
+    mb->setcallback(f1, f2, f3, f4, f5);
+    ihigh = 1;
   }
 
-  void setcallback(void (*f1)(int*, int*),
-		    void (*f2)(int *,int *,double *),
-		    void (*f3)(int *,double *,int *,double *),
-		    void (*f4)(int *,double *,int *,int *,double *,double *,int *),
-		   void (*f5)(int *,int *,double *,int *,int*,double *))
-  {
-    mb->setcallback(f1,f2,f3,f4,f5);
-    ihigh=1;
+  void setp4estcallback(void (*f1)(double *, int *, int *, int *),
+                        void (*f2)(int *, int *)) {
+    mb->setp4estcallback(f1, f2);
   }
 
-  void setp4estcallback(void (*f1)(double *,int *,int *,int *),
-			void (*f2) (int *,int *))
-  {
-    mb->setp4estcallback(f1,f2);
+  void set_p4est(void) {
+    mytag = -mytag;
+    mb->resolutionScale = 1000.0;
   }
 
-  void set_p4est(void)
-  {
-    mytag=-mytag;
-    mb->resolutionScale=1000.0;
-  }
-  
-  void set_amr_callback(void (*f1)(int *,double *,int *,double *))
-  {
+  void set_amr_callback(void (*f1)(int *, double *, int *, double *)) {
     cg->setcallback(f1);
   }
 
-  void register_amr_global_data(int, int, double *, int *,double *, int, int);
+  void register_amr_global_data(int, int, double *, int *, double *, int, int);
   void set_amr_patch_count(int);
-  void register_amr_local_data(int, int ,int *, double *);  
+  void register_amr_local_data(int, int, int *, double *);
   void exchangeAMRDonors(void);
   void checkComm(void);
   void outputStatistics(void);
 
-  void getiBlankCell(int *ibout)
-  {
-    mb->getiBlankCell(ibout);
-  }
-  
+  void getiBlankCell(int *ibout) { mb->getiBlankCell(ibout); }
 };
-      
+
 #endif

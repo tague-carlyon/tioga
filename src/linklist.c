@@ -1,4 +1,3 @@
-
 /* This file is part of the Tioga software library */
 
 /* Tioga  is a tool for overset grid assembly on parallel distributed systems */
@@ -21,85 +20,85 @@
 
 void deallocateLinkList(DONORLIST *temp)
 {
-  if (temp!=NULL) 
-    {
-      deallocateLinkList(temp->next);
-      free(temp);
-    }
+  if (temp != NULL) 
+  {
+    deallocateLinkList(temp->next);
+    free(temp);
+  }
 }
 
 void deallocateLinkList2(INTEGERLIST *temp)
 {
-  if (temp!=NULL) 
-    {
-      deallocateLinkList2(temp->next);
-      free(temp);
-    }
+  if (temp != NULL) 
+  {
+    deallocateLinkList2(temp->next);
+    free(temp);
+  }
 }
 
 void deallocateLinkList3(INTEGERLIST2 *temp)
 {
-  if (temp!=NULL)
-    {
-      if (temp->intData) free(temp->intData);
-      if (temp->realData) free(temp->realData);
-      deallocateLinkList3(temp->next);
-      free(temp);
-    }
+  if (temp != NULL)
+  {
+    if (temp->intData) free(temp->intData);
+    if (temp->realData) free(temp->realData);
+    deallocateLinkList3(temp->next);
+    free(temp);
+  }
 }
 
 void deallocateLinkList4(INTERPLIST2 *temp)
 {
-  if (temp!=NULL)
-    {
-      if (temp->inode) free(temp->inode);
-      if (temp->weights) free(temp->weights);
-      deallocateLinkList4(temp->next);
-      free(temp);
-    }
+  if (temp != NULL)
+  {
+    if (temp->inode) free(temp->inode);
+    if (temp->weights) free(temp->weights);
+    deallocateLinkList4(temp->next);
+    free(temp);
+  }
 }
 
-void insertInList(DONORLIST **donorList,DONORLIST *temp1)
+void insertInList(DONORLIST **donorList, DONORLIST *temp1)
 {
   DONORLIST *temp;
   DONORLIST *ptemp;
   int inserted;  
-  temp=*donorList;
-  inserted=0;
-  ptemp=NULL;
-  while(temp!=NULL && !inserted)
+  temp = *donorList;
+  inserted = 0;
+  ptemp = NULL;
+  while (temp != NULL && !inserted)
+  {
+    if (fabs(temp->donorRes) > temp1->donorRes) 
     {
-      if (fabs(temp->donorRes) > temp1->donorRes) 
-	{
-	  temp1->next=temp;
-	  if (ptemp!=NULL) 
-	    {
-	      ptemp->next=temp1;
-	    }
-	  else
-	    {
-	      *donorList=temp1;
-	    }	  
-	  inserted=1;
-	}
-      else
-	{
-	  ptemp=temp;
-	  temp=temp->next;
-	}
-    }
-  if (!inserted) 
-    {
-     if (*donorList) 
+      temp1->next = temp;
+      if (ptemp != NULL) 
       {
-       temp1->next=NULL;
-       ptemp->next=temp1;
+        ptemp->next = temp1;
       }
-     else
-       {
-        temp1->next=NULL;
-        *donorList=temp1;
-       }
+      else
+      {
+        *donorList = temp1;
+      }	  
+      inserted = 1;
     }
+    else
+    {
+      ptemp = temp;
+      temp = temp->next;
+    }
+  }
+  if (!inserted) 
+  {
+    if (*donorList) 
+    {
+      temp1->next = NULL;
+      ptemp->next = temp1;
+    }
+    else
+    {
+      temp1->next = NULL;
+      *donorList = temp1;
+    }
+  }
 }
 

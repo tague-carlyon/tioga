@@ -5,18 +5,17 @@
 
 #ifdef __NVCC__
 //#ifdef __CUDACC__
-static void HandleError(cudaError_t err, const char *file, int line){
-  if(err != cudaSuccess){
+static void HandleError(cudaError_t err, const char *file, int line) {
+  if (err != cudaSuccess) {
     printf("%s in %s at line %d\n", cudaGetErrorString(err), file, line);
     exit(EXIT_FAILURE);
   }
 }
-#define HANDLE_ERROR( err ) (HandleError( err, __FILE__, __LINE__))
+#define HANDLE_ERROR(err) (HandleError(err, __FILE__, __LINE__))
 #endif
 
-
 template<typename T>
-class GPUvec{
+class GPUvec {
   bool owndata;
 public:
   GPUvec(int p, int nv);
@@ -34,9 +33,8 @@ void tmp_update(int pts, double* q);
 void freeGPUInterpList(INTERPLIST* d_interplist);
 void allocGPUInterpList(INTERPLIST** d_interplist, int ninterp, INTERPLIST* interplist);
 
-
 void interpolateVectorGPU(GPUvec<double> *vec, int nints, int nreals, int ninterp,
-			  int** intData, double** realData, INTERPLIST* interplist);
+                          int** intData, double** realData, INTERPLIST* interplist);
 
 void updateSolnGPU(int nrecv, PACKET *rcvPack, GPUvec<double> *vec);
 
