@@ -366,12 +366,12 @@ void MeshBlock::initializeInterpList(int ninterp_input)
       }
     TIOGA_FREE(interpList);
   }
-  #ifdef USE_CUDA
+  //#ifdef USE_CUDA
   if( d_interpList){
     freeGPUInterpList(d_interpList);
     d_interpList = NULL;
   }
-  #endif
+  //#endif
   ninterp=ninterp_input;   
   interpListSize=ninterp_input;
   interpList=(INTERPLIST *)malloc(sizeof(INTERPLIST)*interpListSize);
