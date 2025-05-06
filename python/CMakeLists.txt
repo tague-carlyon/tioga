@@ -20,10 +20,10 @@ message(STATUS "Python Libraries: ${Python_LIBRARIES}")
 # Include Directories
 #
 set(INCLUDE_DIRS ${MPI_C_INCLUDE_PATH}
-                 ${PYTHON_INCLUDE_DIRS}
-         ${mpi4py_inc}
-         ${numpy_inc}
-         ${TIOGA_SOURCE_DIR}/src)
+                 ${Python_INCLUDE_DIRS}
+                 ${mpi4py_inc}
+                 ${numpy_inc}
+                 ${TIOGA_SOURCE_DIR}/src)
 
 file(GLOB PYTIOGA_SRC *.cpp)
 message(STATUS "PYTIOGA_SRC: ${PYTIOGA_SRC}")
@@ -42,14 +42,18 @@ target_include_directories(pytioga PUBLIC ${INCLUDE_DIRS})
 target_compile_definitions(pytioga PRIVATE ${PYTIOGA_DEFINITIONS})
 
 # Link libraries to the pytioga target
-target_link_libraries(pytioga tioga ${MPI_LIBRARIES} ${Python_LIBRARIES})
+if(BUILD_CUDA_SUPPORT)
+  target_link_libraries(pytioga tioga ${MPI_LIBRARIES} ${Python_LIBRARIES} ${CUDA_LIBRARIES})
+else()
+  target_link_libraries(pytioga tioga ${MPI_LIBRARIES} ${Python_LIBRARIES})
+endif()
 
 set_target_properties(pytioga PROPERTIES
   OUTPUT_NAME "pytioga"  # Ensures the shared library is named pytioga.so
   PREFIX ""              # Removes the default "lib" prefix
   SUFFIX ".so"           # Ensures the correct suffix for Python modules
-  ARCHIVE_OUTPUT_DIRECTORY ${TIOGA_BINARY_DIR}/lib
-  LIBRARY_OUTPUT_DIRECTORY ${TIOGA_BINARY_DIR}/lib
+  ARCHIVE_OUTPUT_DIRECTORY ${TIOGA_BINARY_DIR}/python
+  LIBRARY_OUTPUT_DIRECTORY ${TIOGA_BINARY_DIR}/python
 )
 
 install(TARGETS pytioga
