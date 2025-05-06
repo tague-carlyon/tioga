@@ -1,5 +1,3 @@
-
-
 set(TIOGA_SOURCES
   # Fortran sources
   kaiser.f
@@ -42,47 +40,37 @@ file(GLOB TIOGA_HEADERS *.h)
 
 if(BUILD_CUDA_SUPPORT)
   # Basic CUDA settings
-  set(CUDA_SEPARABLE_COMPILATION ON CACHE INTERNAL "Compile GPU code seperately")
+  set(CUDA_SEPARABLE_COMPILATION ON CACHE INTERNAL "Compile GPU code separately")
   set(CUDA_PROPAGATE_HOST_FLAGS OFF CACHE INTERNAL "Do not propagate host flags")
   list(APPEND CUDA_OPTS "-O2")
   list(APPEND TIOGA_DEFINITIONS "-DUSE_CUDA")
-  list(APPEND CUDA_OPTS ${CMAKE_C_COMPILER} -fPIC)
-  # -ccbin 
+  list(APPEND CUDA_OPTS --compiler-options -fPIC)
+
   # Get all the CUDA files
   file(GLOB cu_sources "*.cu")
-  message(STATUS "sources: ${cu_sources}")
+  message(STATUS "CUDA sources: ${cu_sources}")
 
-  add_library(tioga STATIC ${TIOGA_SOURCES} ${cu_sources})
-  target_include_directories(tioga PUBLIC ${MPI_C_INCLUDE_PATH})
+  # Create a separate library for CUDA files
+  foreach(cu_file ${cu_sources})
+    get_filename_component(cu_file_name ${cu_file} NAME_WE)
+    add_library(${cu_file_name}_obj OBJECT ${cu_file})
+    target_compile_options(${cu_file_name}_obj PRIVATE ${CUDA_OPTS})
+    target_include_directories(${cu_file_name}_obj PUBLIC ${MPI_C_INCLUDE_PATH})
+    list(APPEND cuda_objects $<TARGET_OBJECTS:${cu_file_name}_obj>)
+  endforeach()
 
-  target_compile_options(tioga PRIVATE ${CUDA_OPTS})
-  set_target_properties(tioga PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY ${TIOGA_BINARY_DIR}/src
-    LIBRARY_OUTPUT_DIRECTORY ${TIOGA_BINARY_DIR}/src
-    )
+  # Combine CUDA objects into the main library
+  add_library(tioga STATIC ${TIOGA_SOURCES} ${cuda_objects})
   target_compile_definitions(tioga PRIVATE ${TIOGA_DEFINITIONS})
   target_include_directories(tioga PUBLIC ${MPI_C_INCLUDE_PATH})
-  set(CUDA_LIBRARIES ${CUDA_CUDART_LIBRARY} ${CUDA_CUBLAS_LIBRARIES} ${CUDA_CURAND_LIBRARIES})
-  message(STATUS "cudalibs: ${CUDA_LIBRARIES}")
-  #
-  # Static libraries dont actually link to external libraries... BUT
-  # if you tell cmake it does, cmake will remember and add those
-  # libraries when the ".a" file is linked somewhere else. If the ".a"
-  # file is linked externally (like form another project), just make
-  # sure the shared object or executable also links these libraries:
-  #
   target_link_libraries(tioga ${MPI_LIBRARIES} ${CMAKE_DL_LIBS} ${CUDA_LIBRARIES})
-
 else()
   message(STATUS "BUILDING WITHOUT CUDA SUPPORT")
-  # add_library(tioga SHARED ${TIOGA_SOURCES})
-  add_library(tioga ${TIOGA_SOURCES})
+  add_library(tioga STATIC ${TIOGA_SOURCES})
   target_compile_definitions(tioga PRIVATE ${TIOGA_DEFINITIONS})
   target_include_directories(tioga PUBLIC ${MPI_C_INCLUDE_PATH})
   target_link_libraries(tioga ${MPI_LIBRARIES} ${CMAKE_DL_LIBS})
-
 endif()
-
 
 if(MPI_COMPILE_FLAGS)
   set_target_properties(tioga PROPERTIES
