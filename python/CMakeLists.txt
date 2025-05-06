@@ -13,6 +13,8 @@ execute_process(COMMAND python -c "import numpy; print( numpy.get_include() )"
   OUTPUT_VARIABLE numpy_inc OUTPUT_STRIP_TRAILING_WHITESPACE)
 message(STATUS "mpi4py: ${mpi4py_inc}")
 message(STATUS "numpy: ${numpy_inc}")
+message(STATUS "Python Include Dir: ${Python_INCLUDE_DIRS}")
+message(STATUS "Python Libraries: ${Python_LIBRARIES}")
 
 #
 # Include Directories
@@ -24,6 +26,7 @@ set(INCLUDE_DIRS ${MPI_C_INCLUDE_PATH}
          ${TIOGA_SOURCE_DIR}/src)
 
 file(GLOB PYTIOGA_SRC *.cpp)
+message(STATUS "PYTIOGA_SRC: ${PYTIOGA_SRC}")
 
 if(BUILD_CUDA_SUPPORT)
   list(APPEND PYTIOGA_DEFINITIONS "-DUSE_CUDA")
@@ -39,15 +42,16 @@ target_include_directories(pytioga PUBLIC ${INCLUDE_DIRS})
 target_compile_definitions(pytioga PRIVATE ${PYTIOGA_DEFINITIONS})
 
 # Link libraries to the pytioga target
-if(BUILD_CUDA_SUPPORT)
-  target_link_libraries(pytioga tioga ${MPI_LIBRARIES} ${Python_LIBRARIES} ${CUDA_LIBRARIES})
-else()
-  target_link_libraries(pytioga tioga ${MPI_LIBRARIES} ${Python_LIBRARIES})
-endif()
+target_link_libraries(pytioga tioga ${MPI_LIBRARIES} ${Python_LIBRARIES})
 
 set_target_properties(pytioga PROPERTIES
+  OUTPUT_NAME "pytioga"  # Ensures the shared library is named pytioga.so
+  PREFIX ""              # Removes the default "lib" prefix
+  SUFFIX ".so"           # Ensures the correct suffix for Python modules
   ARCHIVE_OUTPUT_DIRECTORY ${TIOGA_BINARY_DIR}/lib
   LIBRARY_OUTPUT_DIRECTORY ${TIOGA_BINARY_DIR}/lib
-  COMPILE_FLAGS "-fPIC"
-  PREFIX "" # no lib prefix
+)
+
+install(TARGETS pytioga
+  LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3.x/site-packages
 )
