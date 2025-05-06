@@ -20,7 +20,6 @@
 
 #ifndef MESHBLOCK_H
 #define MESHBLOCK_H
-#include "signalHandler.c"
 #include <vector>
 #include <stdint.h>
 #include <assert.h>
@@ -369,28 +368,6 @@ class MeshBlock
 
   void getiBlankCell(int *iblank_out)
   {
-    current_function = __func__;
-    signal(SIGSEGV, signalHandler);
-
-    if(NULL == nullptr) printf("NULL is nullptr\n");
-
-    if (iblank_cell == nullptr || iblank_out == nullptr) {
-      fprintf(stderr, "Error: iblank_cell or iblank_out is null\n");
-      return;
-    }
-    else
-    {
-      fprintf(stderr, "Error: iblank_cell or iblank_out is not null\n");
-    }
-
-    if (ncells <= 0) {
-      fprintf(stderr, "Error: ncells is not a valid value\n");
-      return;
-    }
-    else
-    {
-      fprintf(stderr, "Error: ncells is a valid value\n");
-    }
     for(int j=0;j<ncells;j++)
     {
       iblank_out[j]=iblank_cell[j];

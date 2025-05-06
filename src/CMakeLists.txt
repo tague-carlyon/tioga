@@ -41,44 +41,28 @@ set(TIOGA_SOURCES
 file(GLOB TIOGA_HEADERS *.h)
 
 if(BUILD_CUDA_SUPPORT)
-  # Load the CUDA cmake variables
-  find_package(CUDA REQUIRED)
-  # Set architecture flags
-  if((CUDA_VERSION_MAJOR EQUAL 12) OR (CUDA_VERSION_MAJOR GREATER 12))
-    set(CUDA_OPTS "-arch=sm_80")
-    list(APPEND CUDA_OPTS "-gencode=arch=compute_80,code=sm_80")
-    list(APPEND CUDA_OPTS "-gencode=arch=compute_70,code=sm_70")
-  elseif((CUDA_VERSION_MAJOR EQUAL 8) OR (CUDA_VERSION_MAJOR GREATER 8))
-    set(CUDA_OPTS "-arch=sm_30")
-    list(APPEND CUDA_OPTS "-gencode=arch=compute_30,code=sm_30")
-    list(APPEND CUDA_OPTS "-gencode=arch=compute_60,code=sm_60")
-  elseif((CUDA_VERSION_MAJOR EQUAL 7) OR (CUDA_VERSION_MAJOR GREATER 7))
-    set(CUDA_OPTS "-arch=sm_30")
-    list(APPEND CUDA_OPTS "-gencode=arch=compute_30,code=sm_30")
-  else()
-    set(CUDA_OPTS "-arch=sm_20")
-    list(APPEND CUDA_OPTS "-gencode=arch=compute_20,code=sm_20")
-  endif()
-  message(STATUS "CUDA target : ${CUDA_OPTS}")
   # Basic CUDA settings
   set(CUDA_SEPARABLE_COMPILATION ON CACHE INTERNAL "Compile GPU code seperately")
   set(CUDA_PROPAGATE_HOST_FLAGS OFF CACHE INTERNAL "Do not propagate host flags")
   list(APPEND CUDA_OPTS "-O2")
   list(APPEND TIOGA_DEFINITIONS "-DUSE_CUDA")
-  list(APPEND CUDA_OPTS -ccbin ${CMAKE_C_COMPILER} --compiler-options -fPIC)
-
+  list(APPEND CUDA_OPTS ${CMAKE_C_COMPILER} -fPIC)
+  # -ccbin 
   # Get all the CUDA files
   file(GLOB cu_sources "*.cu")
   message(STATUS "sources: ${cu_sources}")
-  cuda_include_directories( ${MPI_C_INCLUDE_PATH} )
 
-  cuda_add_library(tioga STATIC ${TIOGA_SOURCES} ${cu_sources} OPTIONS ${CUDA_OPTS} ${TIOGA_DEFINITIONS})
+  add_library(tioga STATIC ${TIOGA_SOURCES} ${cu_sources})
+  target_include_directories(tioga PUBLIC ${MPI_C_INCLUDE_PATH})
+
+  target_compile_options(tioga PRIVATE ${CUDA_OPTS})
   set_target_properties(tioga PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY ${TIOGA_BINARY_DIR}/src
     LIBRARY_OUTPUT_DIRECTORY ${TIOGA_BINARY_DIR}/src
     )
   target_compile_definitions(tioga PRIVATE ${TIOGA_DEFINITIONS})
   target_include_directories(tioga PUBLIC ${MPI_C_INCLUDE_PATH})
+  set(CUDA_LIBRARIES ${CUDA_CUDART_LIBRARY} ${CUDA_CUBLAS_LIBRARIES} ${CUDA_CURAND_LIBRARIES})
   message(STATUS "cudalibs: ${CUDA_LIBRARIES}")
   #
   # Static libraries dont actually link to external libraries... BUT
@@ -90,7 +74,7 @@ if(BUILD_CUDA_SUPPORT)
   target_link_libraries(tioga ${MPI_LIBRARIES} ${CMAKE_DL_LIBS} ${CUDA_LIBRARIES})
 
 else()
-
+  message(STATUS "BUILDING WITHOUT CUDA SUPPORT")
   # add_library(tioga SHARED ${TIOGA_SOURCES})
   add_library(tioga ${TIOGA_SOURCES})
   target_compile_definitions(tioga PRIVATE ${TIOGA_DEFINITIONS})

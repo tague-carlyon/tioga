@@ -1,19 +1,14 @@
 
 
-find_package(PythonInterp)
-find_package(PythonLibs)
-if(NOT ${PYTHONLIBS_FOUND})
-  find_package(PythonInterp 2.7 REQUIRED)
-  find_package(PythonLibs 2.7 REQUIRED)
-endif()
-if(${PYTHON_VERSION_STRING} VERSION_LESS "3")
+find_package(Python REQUIRED COMPONENTS Interpreter Development)
+if(Python_VERSION VERSION_LESS "3")
   set(PYTHON_2_COMPATIBILITY "from __future__ import absolute_import, division, print_function")
 else()
   set(PYTHON_2_COMPATIBILITY "# Using Python 3")
 endif()
 
-# execute_process(COMMAND python -c "import mpi4py; print( mpi4py.get_include() )"
-#   OUTPUT_VARIABLE mpi4py_inc OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND python -c "import mpi4py; print( mpi4py.get_include() )"
+   OUTPUT_VARIABLE mpi4py_inc OUTPUT_STRIP_TRAILING_WHITESPACE)
 execute_process(COMMAND python -c "import numpy; print( numpy.get_include() )"
   OUTPUT_VARIABLE numpy_inc OUTPUT_STRIP_TRAILING_WHITESPACE)
 message(STATUS "mpi4py: ${mpi4py_inc}")

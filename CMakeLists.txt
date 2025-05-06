@@ -1,6 +1,14 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.5)
 
 project(TIOGA CXX C Fortran)
+
+# Automatically set CMAKE_CUDA_ARCHITECTURES based on the current PC configuration
+include(FindCUDA/select_compute_arch)
+# Manually specify CUDA architectures
+set(CMAKE_CUDA_ARCHITECTURES 80 90)
+
+# Explicitly enable CUDA language support
+enable_language(CUDA)
 
 option(BUILD_SHARED_LIBS "Build shared libraries (default: off)" off)
 option(BUILD_TIOGA_EXE "Build tioga driver code (default: off)" off)
