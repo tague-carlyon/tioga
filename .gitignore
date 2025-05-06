@@ -5,6 +5,9 @@ case/*.dat
 case/fort*
 case/grid/*.plt
 install*
+*.json
+*.vscode
+*.swp
 
 
 GPATH
