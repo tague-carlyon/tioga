@@ -20,7 +20,7 @@
 
 #ifndef MESHBLOCK_H
 #define MESHBLOCK_H
-
+#include "signalHandler.c"
 #include <vector>
 #include <stdint.h>
 #include <assert.h>
@@ -29,6 +29,7 @@
 #ifdef USE_CUDA
 #include "cuda_functions.h"
 #endif
+
 // forward declare to instantiate one of the methods
 class parallelComm;
 class CartGrid;
@@ -75,9 +76,9 @@ class MeshBlock
   int interpListSize;
   INTERPLIST *interpList;   /**< list of donor nodes in my grid, with fractions and information of
                                  who they donate to */ 
-  #ifdef USE_CUDA
-  INTERPLIST *d_interpList;
-  #endif
+  //#ifdef USE_CUDA
+  INTERPLIST *d_interpList = NULL;
+  //#endif
   int *interp2donor;
 
   INTEGERLIST *cancelList;  /** receptors that need to be cancelled because of */
@@ -166,15 +167,15 @@ class MeshBlock
     res_search=NULL;xsearch=NULL; donorId=NULL;xtag=NULL;
     adt=NULL; cancelList=NULL; userSpecifiedNodeRes=NULL; userSpecifiedCellRes=NULL; nfringe=1;
     mexclude=3;
-    #ifdef USE_CUDA
+    //#ifdef USE_CUDA
     d_interpList=NULL;
-    #endif
+    //#endif
     // new vars
     ninterp=ninterp2=interpListSize=interp2ListSize=0;
     ctag=NULL;pointsPerCell=NULL;maxPointsPerCell=0;rxyz=NULL;ntotalPoints=0;rst=NULL;ihigh=0;ipoint=0;
     interpList2=NULL;picked=NULL;ctag_cart=NULL;rxyzCart=NULL;donorIdCart=NULL;pickedCart=NULL;ntotalPointsCart=0;
     nreceptorCellsCart=0;ninterpCart=0;interpListCartSize=0;interpListCart=NULL;
-    resolutionScale=1.0; receptorIdCart=NULL;
+    resolutionScale=1.0; receptorIdCart=NULL; ncells=0;
 
     cellGID = NULL;
     iblank_reduced=NULL;
@@ -189,7 +190,7 @@ class MeshBlock
 
   /** basic destructor */
   ~MeshBlock();
-      
+
   void preprocess(void);
 
   void tagBoundary(void);
@@ -365,6 +366,37 @@ class MeshBlock
   void check_for_uniform_hex();
 
   void create_hex_cell_map();
+
+  void getiBlankCell(int *iblank_out)
+  {
+    current_function = __func__;
+    signal(SIGSEGV, signalHandler);
+
+    if(NULL == nullptr) printf("NULL is nullptr\n");
+
+    if (iblank_cell == nullptr || iblank_out == nullptr) {
+      fprintf(stderr, "Error: iblank_cell or iblank_out is null\n");
+      return;
+    }
+    else
+    {
+      fprintf(stderr, "Error: iblank_cell or iblank_out is not null\n");
+    }
+
+    if (ncells <= 0) {
+      fprintf(stderr, "Error: ncells is not a valid value\n");
+      return;
+    }
+    else
+    {
+      fprintf(stderr, "Error: ncells is a valid value\n");
+    }
+    for(int j=0;j<ncells;j++)
+    {
+      iblank_out[j]=iblank_cell[j];
+    }
+  }
 };
+
 
 #endif /* MESHBLOCK_H */

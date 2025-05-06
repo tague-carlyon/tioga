@@ -259,6 +259,12 @@ class tioga
   void outputStatistics(void);
   void myTimer(char const *, int);
   void reduce_fringes(void);
+
+  void getiBlankCell(int *ibout)
+  {
+    mb->getiBlankCell(ibout);
+  }
+
 };
       
   
