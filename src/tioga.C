@@ -314,8 +314,8 @@ void tioga::dataUpdate_AMR(int nvar,int interptype)
 	  bid=rcvPack[k].intData[2*i];
 	  if (bid < 0) 
 	    {
-              int tmp1=rcvPack[k].intData[2*i+1];
-              int inode=mblocks[-(bid+1)]->receptorIdCart[tmp1];
+        int tmp1=rcvPack[k].intData[2*i+1];
+        int inode=mblocks[-(bid+1)]->receptorIdCart[tmp1];
 	      mblocks[-(bid+1)]->updateSolnData(inode,&rcvPack[k].realData[m],qblock[-(bid+1)],nvar,interptype);
 	    }
 	  else
@@ -541,8 +541,6 @@ void tioga::dataUpdate(GPUvec<double> *vec)
   // double* q = new double[vec->nvar*vec->pts];
   // vec->to_cpu(q);
 
-  // printf("CALLING GPU VERSION OF DATAUPDATE\n");
-
   //
   // initialize send and recv packets
   //
@@ -611,8 +609,8 @@ void tioga::dataUpdate(GPUvec<double> *vec)
   // 	  m+=nvar;
   // 	}
   //   }
+  
   updateSolnGPU(nrecv, rcvPack, vec);
-
   //
   // release all memory
   //
@@ -626,6 +624,7 @@ void tioga::dataUpdate(GPUvec<double> *vec)
 
   // vec->to_gpu(q);
   // delete q;
+  printf("FINISHED GPU VERSION OF DATAUPDATE\n");
 }
 #endif
 

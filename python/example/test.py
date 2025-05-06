@@ -5,7 +5,7 @@ sys.path.append("../../build/python")
 import pytioga
 from helper import *
 from mpi4py import MPI
-print "Everything imported correctly"
+print("Everything imported correctly")
 
 #                                                                                          
 # MPI World Setup                                                                          
@@ -46,14 +46,14 @@ gridData={'gridtype'        :'unstructured',
           'istor'           :'row',
           'q-variables'     :[q]}
 
-t = pytioga.PyTioga(world)
+t = pytioga.PyTioga(rank)
 
 # print "initialized"
 
 t.register_data(gridData)
 # print "done registering data!"
 
-t.preprocess()
+#t.preprocess()
 # print "done preprocessing grids!"
 
 t.connect()
@@ -66,5 +66,5 @@ t.connect()
 
 filename = "cube%d.dat"%(rank)
 to_tecplot(filename, coord, iblank)
-print "wrote data file from python"
+print("wrote data file from python")
 
