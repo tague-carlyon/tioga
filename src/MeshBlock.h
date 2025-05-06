@@ -368,12 +368,12 @@ class MeshBlock
 
   void getiBlankCell(int *iblank_out)
   {
+    iblank_out = (int *)malloc(sizeof(int)*ncells);
     for(int j=0;j<ncells;j++)
     {
       iblank_out[j]=iblank_cell[j];
     }
   }
 };
-
 
 #endif /* MESHBLOCK_H */
