@@ -14,8 +14,10 @@ option(BUILD_CUDA_SUPPORT "Build with support for GPU memory exchange" on)
 find_package(MPI REQUIRED)
 include_directories(${MPI_INCLUDE_PATH})
 
-set(CMAKE_CXX_FLAGS "-fPIC -march=native" ${CMAKE_CXX_FLAGS})
-set(CMAKE_C_FLAGS "-fPIC -march=native" ${CMAKE_C_FLAGS})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -march=native")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -march=native")
+set(MPI_CXX_COMPILE_FLAGS "${MPI_CXX_COMPILE_FLAGS} -march=native")
+set(MPI_C_COMPILE_FLAGS "${MPI_C_COMPILE_FLAGS} -march=native")
 
 # Set some default compilation settings for Fortran compiler
 if (${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")
