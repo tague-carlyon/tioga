@@ -14,10 +14,12 @@ option(BUILD_CUDA_SUPPORT "Build with support for GPU memory exchange" on)
 find_package(MPI REQUIRED)
 include_directories(${MPI_INCLUDE_PATH})
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -march=native")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC -march=native")
-set(MPI_CXX_COMPILE_FLAGS "${MPI_CXX_COMPILE_FLAGS} -march=native")
-set(MPI_C_COMPILE_FLAGS "${MPI_C_COMPILE_FLAGS} -march=native")
+set(MPI_CXX_COMPILE_FLAGS "${MPI_CXX_COMPILE_FLAGS} -fpic -O3 -flto -funroll-loops -ftree-vectorize -march=native")
+set(MPI_C_COMPILE_FLAGS "${MPI_C_COMPILE_FLAGS} -fpic -O3 -flto -funroll-loops -ftree-vectorize -march=native")
+
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${MPI_C_COMPILE_FLAGS} ${C_DEFAULT_FLAGS} -fpic -O3 -flto -funroll-loops -ftree-vectorize -march=native")
+SET(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${MPI_Fortran_COMPILE_FLAGS} ${Fortran_DEFAULT_FLAGS} -Ofast -O5")
+SET(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} ${MPI_CXX_COMPILEFLAGS} ${CXX_DEFAULT_FLAGS} -fpic -O3 -flto -funroll-loops -ftree-vectorize -march=native")
 
 # Set some default compilation settings for Fortran compiler
 if (${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")

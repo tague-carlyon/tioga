@@ -582,6 +582,9 @@ void tioga::register_amr_global_data(int nf, int qstride, double *qnodein, int *
 void tioga::set_amr_patch_count(int npatchesin) {
   ncart = npatchesin;
   if (cb) delete[] cb;
+  if (ncart <= 0) {
+    throw std::runtime_error("Invalid ncart value in set_amr_patch_count");
+  }
   cb = new CartBlock[ncart];
 }
 
