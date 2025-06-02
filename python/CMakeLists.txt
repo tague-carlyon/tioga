@@ -8,7 +8,7 @@ message(STATUS "Python3 include directories: ${Python3_INCLUDE_DIRS}")
 message(STATUS "Python3 libraries: ${Python3_LIBRARIES}")
 
 
-execute_process(COMMAND python -c "import mpi4py; print( mpi4py.get_include() )"
+execute_process(COMMAND python3 -c "import mpi4py; print( mpi4py.get_include() )"
   OUTPUT_VARIABLE mpi4py_inc OUTPUT_STRIP_TRAILING_WHITESPACE)
 execute_process(COMMAND python3 -c "import numpy; print( numpy.get_include() )"
   OUTPUT_VARIABLE numpy_inc OUTPUT_STRIP_TRAILING_WHITESPACE)
