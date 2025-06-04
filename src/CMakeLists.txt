@@ -42,6 +42,14 @@ if(BUILD_CUDA_SUPPORT)
   # Explicitly enable CUDA language support
   enable_language(CUDA)
 
+  # Manually specify CUDA architectures
+  set(CMAKE_CUDA_ARCHITECTURES 80)
+
+  # Automatically set CMAKE_CUDA_ARCHITECTURES based on the current PC configuration
+  include(FindCUDA/select_compute_arch)
+
+  find_package(CUDAToolkit REQUIRED)
+
   # Basic CUDA settings
   set(CUDA_SEPARABLE_COMPILATION ON CACHE INTERNAL "Compile GPU code separately")
   set(CUDA_PROPAGATE_HOST_FLAGS OFF CACHE INTERNAL "Do not propagate host flags")
@@ -66,7 +74,7 @@ if(BUILD_CUDA_SUPPORT)
   add_library(tioga STATIC ${TIOGA_SOURCES} ${cuda_objects})
   target_compile_definitions(tioga PRIVATE ${TIOGA_DEFINITIONS})
   target_include_directories(tioga PUBLIC ${MPI_C_INCLUDE_PATH})
-  target_link_libraries(tioga ${MPI_LIBRARIES} ${CMAKE_DL_LIBS} ${CUDA_LIBRARIES})
+  target_link_libraries(tioga ${MPI_LIBRARIES} ${CMAKE_DL_LIBS} ${CUDA_LIBRARIES} CUDA::cudart)
 else()
   message(STATUS "BUILDING WITHOUT CUDA SUPPORT")
   add_library(tioga STATIC ${TIOGA_SOURCES})
