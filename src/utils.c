@@ -414,7 +414,7 @@ void transform2OBB(double xv[3],double xc[3],double vec[3][3],double xd[3])
 void writebbox(OBB *obb,int bid)
 {
   FILE *fp;
-  char intstring[7];
+  char intstring[12];
   char fname[80];
   int l,k,j,m,il,ik,ij;
   REAL xx[3];
@@ -457,7 +457,7 @@ void writebboxdiv(OBB *obb,int bid)
   int i,j,k,l,m,n;
   int iorder[8]={1, 2, 4, 3, 5, 6, 8, 7};
   FILE *fp;
-  char intstring[7];
+  char intstring[12];
   char fname[80];
 
   for(j=0;j<3;j++) { mapdims[j]=12; mapdx[j]=2*obb->dxc[j]/mapdims[j]; mdx[j]=0.5*mapdx[j];mx0[j]=0;}
