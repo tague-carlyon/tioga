@@ -130,12 +130,12 @@ __global__ void update_vec(double* q, int nvar, int nupdate, int* idata, double*
 
 __global__ void idbg_kernel(int* vec, int n){
   for(int i=0; i<n; i++){
-    printf("_dbggpu__ %2d : %7d\n", vec[i]);
+    printf("_dbggpu__ %2d : %7d\n", i, vec[i]);
   }
 }
 __global__ void ddbg_kernel(double* vec, int n){
   for(int i=0; i<n; i++){
-    printf("_dbggpu__ %2d : %16.8e\n", vec[i]);
+    printf("_dbggpu__ %2d : %16.8e\n", i, vec[i]);
   }
 }
 
