@@ -39,10 +39,13 @@ set(TIOGA_SOURCES
 file(GLOB TIOGA_HEADERS *.h)
 
 if(BUILD_CUDA_SUPPORT)
+  # Explicitly enable CUDA language support
+  enable_language(CUDA)
+
   # Basic CUDA settings
   set(CUDA_SEPARABLE_COMPILATION ON CACHE INTERNAL "Compile GPU code separately")
   set(CUDA_PROPAGATE_HOST_FLAGS OFF CACHE INTERNAL "Do not propagate host flags")
-  list(APPEND CUDA_OPTS "-O2")
+  list(APPEND CUDA_OPTS "-O3" "--compile -march=native")
   list(APPEND TIOGA_DEFINITIONS "-DUSE_CUDA")
   list(APPEND CUDA_OPTS --compiler-options -fPIC)
 
