@@ -2,18 +2,18 @@ cmake_minimum_required(VERSION 3.12)
 
 
 # modern cmake implimentation of python bindings
-find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
+find_package(Python3 REQUIRED COMPONENTS Interpreter Development NumPy)
 
 message(STATUS "Python3 include directories: ${Python3_INCLUDE_DIRS}")
 message(STATUS "Python3 libraries: ${Python3_LIBRARIES}")
+message(STATUS "numpy include directories: ${Python3_NumPy_INCLUDE_DIRS}")
 
 
 execute_process(COMMAND python3 -c "import mpi4py; print( mpi4py.get_include() )"
   OUTPUT_VARIABLE mpi4py_inc OUTPUT_STRIP_TRAILING_WHITESPACE)
-execute_process(COMMAND python3 -c "import numpy; print( numpy.get_include() )"
-  OUTPUT_VARIABLE numpy_inc OUTPUT_STRIP_TRAILING_WHITESPACE)
+
 message(STATUS "mpi4py: ${mpi4py_inc}")
-message(STATUS "numpy: ${numpy_inc}")
+message(STATUS "numpy: ${Python3_NumPy_INCLUDE_DIRS}")
 
 #
 # Include Directories
@@ -21,7 +21,7 @@ message(STATUS "numpy: ${numpy_inc}")
 set(INCLUDE_DIRS ${MPI_C_INCLUDE_PATH}
                  ${Python3_INCLUDE_DIRS}
 		 ${mpi4py_inc}
-		 ${numpy_inc}
+		 ${Python3_NumPy_INCLUDE_DIRS}
 		 ${TIOGA_SOURCE_DIR}/src)
 
 file(GLOB PYTIOGA_SRC *.cpp)
