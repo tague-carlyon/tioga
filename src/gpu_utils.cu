@@ -31,7 +31,7 @@ void freeGPUInterpList(INTERPLIST* d_interpList){
 }
 
 void allocGPUInterpList(INTERPLIST** d_interplist, int ninterp, INTERPLIST* interplist){
-
+  
   int *d_inode, *h_inode;
   double *d_weights, *h_weights;
   INTERPLIST* tmplist;

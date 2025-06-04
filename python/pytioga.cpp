@@ -263,7 +263,6 @@ PyObject* PyTioga_connect(PyTioga* self){
   self->timers[TIMER_CONNECT] += self->tock();
 
   if(self->iblankcell != NULL){
-    //throw std::runtime_error("POSSIBLE PROBLEM: python>pytioga.cpp>PyTioga_connect previously got iblankcell from there but deprecated function call prevents this.");
     self->tg->getiBlankCell(self->iblankcell);
   }
 

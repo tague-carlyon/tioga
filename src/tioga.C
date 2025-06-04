@@ -83,7 +83,12 @@ void tioga::registerGridData(int btag,int nnodes,double *xyz,int *ibl, int nwbc,
     iblk = idxit->second;
   }
 
-  auto& mb = mblocks[iblk];
+  // instead of auto& mb = mblocks[iblk];
+  // we use a pointer to avoid dereferencing the unique_ptr
+  // which is not allowed in the constructor
+  // this->mb = mblocks[iblk].get();
+  this->mb = mblocks[iblk].get();
+
   mb->setData(btag, nnodes, xyz, ibl, nwbc, nobc, wbcnode, obcnode, ntypes, nv,
               nc, vconn, cell_gid, node_gid);
   mb->myid = myid;
@@ -811,7 +816,7 @@ void tioga::set_amr_patch_count(int npatchesin)
 {
   ncart=npatchesin;
   if (cb) delete [] cb;
-  cb=new CartBlock[ncart];
+  std::vector<CartBlock> cb(ncart);  // Handles memory management automatically
 }
 
 void tioga::register_amr_local_data(int ipatch,int global_id,int *iblank,double *q)
