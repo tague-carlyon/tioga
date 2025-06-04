@@ -5,7 +5,7 @@ project(TIOGA CXX C Fortran)
 # Automatically set CMAKE_CUDA_ARCHITECTURES based on the current PC configuration
 include(FindCUDA/select_compute_arch)
 # Manually specify CUDA architectures
-set(CMAKE_CUDA_ARCHITECTURES 80 90)
+set(CMAKE_CUDA_ARCHITECTURES 80 86 87)
 
 # Explicitly enable CUDA language support
 enable_language(CUDA)
@@ -22,18 +22,20 @@ option(BUILD_CUDA_SUPPORT "Build with CUDA support (default: on)" on)
 find_package(MPI REQUIRED)
 include_directories(${MPI_INCLUDE_PATH})
 
-# Ensure C++11 standard is enabled
-if (CMAKE_VERSION VERSION_LESS "3.1")
-  set(CMAKE_CXX_FLAGS "-g -rdynamic -fPIC -std=c++0x ${CMAKE_CXX_FLAGS}")
-else()
-  set(CMAKE_CXX_STANDARD 11)
-  set(CMAKE_CXX_FLAGS "-O3 -fPIC ${CMAKE_CXX_FLAGS}")
-endif()
+
+set(MPI_CXX_COMPILE_FLAGS "${MPI_CXX_COMPILE_FLAGS} -fpic -O3 -flto -funroll-loops -ftree-vectorize -march=native")
+set(MPI_C_COMPILE_FLAGS "${MPI_C_COMPILE_FLAGS} -fpic -O3 -flto -funroll-loops -ftree-vectorize -march=native")
+
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${MPI_C_COMPILE_FLAGS} ${C_DEFAULT_FLAGS} -fpic -O3 -flto -funroll-loops -ftree-vectorize -march=native")
+SET(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${MPI_Fortran_COMPILE_FLAGS} ${Fortran_DEFAULT_FLAGS} -O5")
+SET(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} ${MPI_CXX_COMPILEFLAGS} ${CXX_DEFAULT_FLAGS} -fpic -O3 -flto -funroll-loops -ftree-vectorize -march=native")
+
+set(CMAKE_CXX_STANDARD 11)
 
 # Set some default compilation settings for Fortran compiler
 if (${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")
   set(CMAKE_Fortran_FLAGS
-    "${CMAKE_Fortran_FLAGS} -fbounds-check -fbacktrace -fdefault-real-8 -ffree-line-length-none -fPIC")
+    "${CMAKE_Fortran_FLAGS} -O5 -fbounds-check -fbacktrace -fdefault-real-8 -ffree-line-length-none -fPIC")
 elseif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
   set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -r8 -double_size 128 -fPIC")
 endif()
