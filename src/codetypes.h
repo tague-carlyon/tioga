@@ -54,6 +54,7 @@
 #define TOL                1.0e-10
 #define NFRINGE            3
 #define NVAR               6
+#define HOLEMAPSIZE        192
 /*==================================================================*/
 /* inline debugging tools                                           */
 /*==================================================================*/
@@ -79,6 +80,16 @@
 #define Round(aa)\
   (int) ((fabs((aa) - floor(aa)) >= HALF)? ceil(aa): floor(aa))
 #define swap(a,b) { a=a+b;b=a-b;a=a-b;}
+
+#define TIOGA_Max(a1,a2) (((a1) >= (a2))? (a1): (a2))
+#define TIOGA_Min(a1,a2) (((a1) <= (a2))? (a1): (a2))
+
+# define TRACEI(x)  printf("#tioga:\t"#x" =%d\n",x);
+# define TRACED(x)  printf("#tioga:\t"#x" =%.16e\n",x);
+# define TIOGA_MIN(x,y)  (x) < (y) ? (x) : (y)
+# define TIOGA_MAX(x,y)  (x) > (y) ? (x) : (y)
+# define TIOGA_FREE(a1)  {free(a1);a1=NULL;}
+
 /*********************************************************************/
 /* Code specific types                                               */
 /*********************************************************************/
@@ -91,18 +102,27 @@ typedef struct HOLEMAP
   double extents[6];
 } HOLEMAP;
 
+
 typedef struct OBB
 {
   double xc[3];
   double dxc[3];
   double vec[3][3];
   int meshtag;
+
+  int comm_idx;    /* Index in comm map for this OBB                       */
+  int iblk_local;  /* Index of this mesh block                             */
+  int iblk_remote; /* Index of the remote mesh block (intersecting  pair)  */
+  int tag_remote;
+  int send_tag;
+  int recv_tag;
 } OBB;
 
 typedef struct DONORLIST
 {
-  int donorData[3];
+  int donorData[4];
   double donorRes;
+  double receptorRes;
   int cancel;
   struct DONORLIST *next;
 } DONORLIST;
@@ -143,10 +163,10 @@ typedef struct INTEGERLIST
 
 typedef struct INTEGERLIST2
 {
-  int intDataSize, realDataSize;
+  int intDataSize,realDataSize;
   int *intData;
   double *realData;
   struct INTEGERLIST2 *next;
 } INTEGERLIST2; 
 
-#endif
+#endif /* CODETYPES_H */
