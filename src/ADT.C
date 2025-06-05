@@ -1,22 +1,7 @@
+// Copyright TIOGA Developers. See COPYRIGHT file for details.
 //
-// This file is part of the Tioga software library
-//
-// Tioga  is a tool for overset grid assembly on parallel distributed systems
-// Copyright (C) 2015 Jay Sitaraman
-//
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License, or (at your option) any later version.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+// SPDX-License-Identifier: (BSD 3-Clause)
+
 /**
  * Build an alternating digital tree 
  */
@@ -55,11 +40,11 @@ void ADT::buildADT(int d, int nelements,double *elementBbox)
   /*
    * Allocate arrays in the class
    */
-  if (adtExtents) free(adtExtents);
+  if (adtExtents) TIOGA_FREE(adtExtents);
   adtExtents=(double *) malloc(sizeof(double)*ndim);
-  if (adtIntegers) free(adtIntegers);
+  if (adtIntegers) TIOGA_FREE(adtIntegers);
   adtIntegers=(int *) malloc(sizeof(int)*4*nelem);
-  if (adtReals) free(adtReals);
+  if (adtReals) TIOGA_FREE(adtReals);
   adtReals=(double *) malloc(sizeof(double)*nelem*ndim);
   /*
    * Determine extent of elements
@@ -76,12 +61,12 @@ void ADT::buildADT(int d, int nelements,double *elementBbox)
      for(i=0;i<ndim/2;i++)
        {
 	 i2=2*i;
-	 adtExtents[i2]=min(adtExtents[i2],coord[j6+i]);
+	 adtExtents[i2]=TIOGA_MIN(adtExtents[i2],coord[j6+i]);
        }
        for(i=0;i<ndim/2;i++)
        {
 	 i2=2*i+1;
-	 adtExtents[i2]=min(adtExtents[i2],coord[j6+i+ndim/2]);
+	 adtExtents[i2]=TIOGA_MAX(adtExtents[i2],coord[j6+i+ndim/2]);
        }
    }
   //
@@ -111,7 +96,7 @@ void ADT::buildADT(int d, int nelements,double *elementBbox)
   //
   buildADTrecursion(coord,adtReals,adtWork,adtIntegers,elementsAvailable,
 		    &adtCount,side,parent,level,ndim,nelem,nav);
-  //tracei(adtCount);
+  //TRACEI(adtCount);
   //
   // create Inverse map
   //
@@ -130,6 +115,6 @@ void ADT::buildADT(int d, int nelements,double *elementBbox)
   // }
   //fclose(fp);
   //fclose(fp1);
-  free(elementsAvailable);
-  free(adtWork);
+  TIOGA_FREE(elementsAvailable);
+  TIOGA_FREE(adtWork);
 }
