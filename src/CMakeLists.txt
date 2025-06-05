@@ -43,7 +43,7 @@ if(BUILD_CUDA_SUPPORT)
   enable_language(CUDA)
   set(CMAKE_CUDA_STANDARD 14)
   set(CMAKE_CUDA_STANDARD_REQUIRED ON)
-  set(CMAKE_CUDA_ARCHITECTURES 70 80 90)
+  set(CMAKE_CUDA_ARCHITECTURES 80)
   message(STATUS "CMAKE_CUDA_ARCHITECTURES: ${CMAKE_CUDA_ARCHITECTURES}")  # Load the CUDA cmake variables
   find_package(CUDAToolkit REQUIRED)
   message(STATUS "CUDAToolkit include directories: ${CUDAToolkit_INCLUDE_DIRS}")
