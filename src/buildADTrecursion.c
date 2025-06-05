@@ -1,22 +1,7 @@
+// Copyright TIOGA Developers. See COPYRIGHT file for details.
+//
+// SPDX-License-Identifier: (BSD 3-Clause)
 
-/* This file is part of the Tioga software library */
-
-/* Tioga  is a tool for overset grid assembly on parallel distributed systems */
-/* Copyright (C) 2015 Jay Sitaraman */
-
-/* This library is free software; you can redistribute it and/or */
-/* modify it under the terms of the GNU Lesser General Public */
-/* License as published by the Free Software Foundation; either */
-/* version 2.1 of the License, or (at your option) any later version. */
-
-/* This library is distributed in the hope that it will be useful, */
-/* but WITHOUT ANY WARRANTY; without even the implied warranty of */
-/* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU */
-/* Lesser General Public License for more details. */
-
-/* You should have received a copy of the GNU Lesser General Public */
-/* License along with this library; if not, write to the Free Software */
-/* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA */
 #include "codetypes.h"
 
 extern void median_(int *,double *,int *,double *);
@@ -60,28 +45,31 @@ void buildADTrecursion(double *coord,double *adtReals,double *adtWork,int *adtIn
     // find minimum and maximum bounds of the elements
     // contained in this leaf
     //
-    for(i=0;i<nd;i++) {
-      adtReals[ndim*(*adtCount)+i]=BIGVALUE;
-      adtReals[ndim*(*adtCount)+i+nd]=-BIGVALUE;
-    }
+    for(i=0;i<nd;i++)
+      {
+	adtReals[ndim*(*adtCount)+i]=BIGVALUE;
+	adtReals[ndim*(*adtCount)+i+nd]=-BIGVALUE;
+      }
     //
     for(i=0;i<nav;i++)
-      for(j=0;j<nd;j++) {
-        ii=ndim*(*adtCount)+j;
-        iip=ii+nd;
-        jj=ndim*elementsAvailable[i]+j;
-        jjp=jj+nd;
-        //
-        adtReals[ii]=min(adtReals[ii],coord[jj]);
-        adtReals[iip]=max(adtReals[iip],coord[jjp]);
-	    }
+      for(j=0;j<nd;j++)
+	{
+	  ii=ndim*(*adtCount)+j;
+	  iip=ii+nd;
+	  jj=ndim*elementsAvailable[i]+j;
+	  jjp=jj+nd;
+	  //
+	  adtReals[ii]=TIOGA_MIN(adtReals[ii],coord[jj]);
+	  adtReals[iip]=TIOGA_MAX(adtReals[iip],coord[jjp]);
+	}
     //
     // specify that the new element is the child of parent
     // unless root
     //
-    if (side > 0) {
-	    adtIntegers[4*parent+side]=elementsAvailable[nleft-1];
-    }
+    if (side > 0) 
+      {
+	adtIntegers[4*parent+side]=elementsAvailable[nleft-1];
+      }
     parentToChild=*adtCount;
     //
     // build the left side of the tree
