@@ -2,7 +2,14 @@ cmake_minimum_required(VERSION 3.12)
 
 
 # modern cmake implimentation of python bindings
-find_package(Python3 REQUIRED COMPONENTS Interpreter Development NumPy)
+
+if(NOT ZARATAN)
+  message(STATUS "Building on idea system")
+  find_package(Python3 REQUIRED COMPONENTS Interpreter Development NumPy)
+else()
+  message(STATUS "Building on Zaratan system")
+  find_package(Python3 3.10 EXACT REQUIRED COMPONENTS Interpreter Development NumPy)
+endif()
 
 message(STATUS "Python3 include directories: ${Python3_INCLUDE_DIRS}")
 message(STATUS "Python3 libraries: ${Python3_LIBRARIES}")

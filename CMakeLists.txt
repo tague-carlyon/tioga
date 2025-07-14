@@ -7,6 +7,7 @@ option(BUILD_TIOGA_EXE "Build tioga driver code (default: off)" off)
 option(BUILD_GRIDGEN_EXE "Build grid generator code (default: off)" off)
 option(BUILD_PYTHON "Build Python wrapper" on)
 option(BUILD_CUDA_SUPPORT "Build with support for GPU memory exchange" on)
+option(ZARATAN "Building on Zaratan system" OFF)
 
 #
 # Find Libraries
