@@ -73,14 +73,18 @@ if(BUILD_CUDA_SUPPORT)
   # Combine CUDA objects into the main library
   add_library(tioga STATIC ${TIOGA_SOURCES} ${cuda_objects})
   target_compile_definitions(tioga PRIVATE ${TIOGA_DEFINITIONS})
-  target_include_directories(tioga PUBLIC ${MPI_C_INCLUDE_PATH})
-  target_link_libraries(tioga ${MPI_LIBRARIES} ${CMAKE_DL_LIBS} ${CUDA_LIBRARIES} CUDA::cudart)
+  target_include_directories(tioga
+      PUBLIC
+          $<INSTALL_INTERFACE:include/tioga>
+          $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../src>
+  )
+  target_link_libraries(tioga MPI::MPI_CXX ${CMAKE_DL_LIBS} CUDA::cudart)
 else()
   message(STATUS "BUILDING WITHOUT CUDA SUPPORT")
   add_library(tioga STATIC ${TIOGA_SOURCES})
   target_compile_definitions(tioga PRIVATE ${TIOGA_DEFINITIONS})
   target_include_directories(tioga PUBLIC ${MPI_C_INCLUDE_PATH})
-  target_link_libraries(tioga ${MPI_LIBRARIES} ${CMAKE_DL_LIBS})
+  target_link_libraries(tioga MPI::MPI_CXX ${CMAKE_DL_LIBS})
 endif()
 
 if(MPI_COMPILE_FLAGS)

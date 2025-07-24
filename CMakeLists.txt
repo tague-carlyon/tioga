@@ -12,8 +12,6 @@ option(BUILD_PYTHON "Build python wrapper (default: on)" on)
 option(BUILD_CUDA_SUPPORT "Build with CUDA support (default: on)" on)
 
 find_package(MPI REQUIRED)
-include_directories(${MPI_INCLUDE_PATH})
-
 
 set(MPI_CXX_COMPILE_FLAGS "${MPI_CXX_COMPILE_FLAGS} -fpic -O3 -flto -funroll-loops -ftree-vectorize -march=native")
 set(MPI_C_COMPILE_FLAGS "${MPI_C_COMPILE_FLAGS} -fpic -O3 -flto -funroll-loops -ftree-vectorize -march=native")
