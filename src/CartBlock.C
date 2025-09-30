@@ -488,8 +488,8 @@ void CartBlock::writeCellFile(int bid) {
       for(i=0;i<dims[0];i++) {
         ibindex=(k+nf)*(dims[1]+2*nf)*(dims[0]+2*nf)+
           (j+nf)*(dims[0]+2*nf)+(i+nf);
-        ibmin=min(ibmin,ibl[ibindex]);
-        ibmax=max(ibmax,ibl[ibindex]);
+        ibmin=std::min(ibmin,ibl[ibindex]);
+        ibmax=std::max(ibmax,ibl[ibindex]);
         fprintf(fp,"%d\n", ibl[ibindex]);
 	    }
 

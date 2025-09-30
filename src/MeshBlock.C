@@ -525,8 +525,8 @@ void MeshBlock::getWallBounds(int *mtag, int *existWall, double wbox[6])
     i3 = 3 * inode;
     for (j = 0; j < 3; j++)
     {
-      wbox[j] = min(wbox[j], x[i3 + j]);
-      wbox[j + 3] = max(wbox[j + 3], x[i3 + j]);
+      wbox[j] = std::min(wbox[j], x[i3 + j]);
+      wbox[j + 3] = std::max(wbox[j + 3], x[i3 + j]);
     }
   }
 }
@@ -612,14 +612,14 @@ void MeshBlock::markWallBoundary(int *sam, int nx[3], double extents[6])
           {
             xv = x[i3 + k];
             iv = floor((xv - extents[k]) / ds[k]);
-            imin[k] = min(imin[k], iv);
-            imax[k] = max(imax[k], iv);
+            imin[k] = std::min(imin[k], iv);
+            imax[k] = std::max(imax[k], iv);
           }
         }
         for (j = 0; j < 3; j++)
         {
-          imin[j] = max(imin[j], 0);
-          imax[j] = min(imax[j], nx[j] - 1);
+          imin[j] = std::max(imin[j], 0);
+          imax[j] = std::min(imax[j], nx[j] - 1);
         }
         //
         // mark sam to 1
@@ -666,8 +666,8 @@ void MeshBlock::getReducedOBB(OBB *obc, double *realData)
         for (j = 0; j < 3; j++)
           for (k = 0; k < 3; k++)
             xd[j] += (x[i3 + k] - obc->xc[k]) * obc->vec[j][k];
-        for (j = 0; j < 3; j++) bbox[j] = min(bbox[j], xd[j]);
-        for (j = 0; j < 3; j++) bbox[j + 3] = max(bbox[j + 3], xd[j]);
+        for (j = 0; j < 3; j++) bbox[j] = std::min(bbox[j], xd[j]);
+        for (j = 0; j < 3; j++) bbox[j + 3] = std::max(bbox[j + 3], xd[j]);
       }
       iflag = 0;
       for (j = 0; j < 3; j++) iflag = (iflag || (bbox[j] > obc->dxc[j]));
@@ -682,8 +682,8 @@ void MeshBlock::getReducedOBB(OBB *obc, double *realData)
         for (j = 0; j < 3; j++)
           for (k = 0; k < 3; k++)
             xd[j] += (x[i3 + k] - obb->xc[k]) * obb->vec[j][k];
-        for (j = 0; j < 3; j++) realData[j] = min(realData[j], xd[j]);
-        for (j = 0; j < 3; j++) realData[j + 3] = max(realData[j + 3], xd[j]);
+        for (j = 0; j < 3; j++) realData[j] = std::min(realData[j], xd[j]);
+        for (j = 0; j < 3; j++) realData[j + 3] = std::max(realData[j + 3], xd[j]);
       }
     }
   }

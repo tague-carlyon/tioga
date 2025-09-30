@@ -109,7 +109,7 @@ void MeshBlock::getUnresolvedMandatoryReceptors(void)
         {
             get_nodes_per_cell(&(ctag_cart[i]), &(pointsPerCell[i]));
             ntotalPointsCart += pointsPerCell[i];
-            maxPointsPerCell = max(maxPointsPerCell, pointsPerCell[i]);
+            maxPointsPerCell = std::max(maxPointsPerCell, pointsPerCell[i]);
         }
         //
         if (rxyzCart != NULL) free(rxyzCart);

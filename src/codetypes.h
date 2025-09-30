@@ -60,8 +60,8 @@
 /*==================================================================*/
 #define tracei(x)  printf("#tioga:\t"#x" =%d\n",x);
 #define traced(x)  printf("#tioga:\t"#x" =%.16e\n",x);
-#define min(x,y)  (x) < (y) ? (x) : (y)
-#define max(x,y)  (x) > (y) ? (x) : (y)
+//#define min(x,y)  (x) < (y) ? (x) : (y)
+//#define max(x,y)  (x) > (y) ? (x) : (y)
 #define debug(x,y)  printf("#tioga:\t"#x"=%d,"#y"=%d\n",x,y);
 #define stdwrite(x) if (myid==0) printf("#tioga:\t"#x"\n");
 #define dstr(x) printf("#tioga:\t"#x"\n");
@@ -79,7 +79,7 @@
   (((aa) >= 0)? (aa): -(aa))
 #define Round(aa)\
   (int) ((fabs((aa) - floor(aa)) >= HALF)? ceil(aa): floor(aa))
-#define swap(a,b) { a=a+b;b=a-b;a=a-b;}
+//#define swap(a,b) { a=a+b;b=a-b;a=a-b;}
 
 #define TIOGA_Max(a1,a2) (((a1) >= (a2))? (a1): (a2))
 #define TIOGA_Min(a1,a2) (((a1) <= (a2))? (a1): (a2))

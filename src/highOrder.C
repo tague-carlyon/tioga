@@ -162,7 +162,7 @@ void MeshBlock::getInternalNodes(void)
     {
       get_nodes_per_cell(&(ctag[i]), &(pointsPerCell[i]));
       ntotalPoints += pointsPerCell[i];
-      maxPointsPerCell = max(maxPointsPerCell, pointsPerCell[i]);
+      maxPointsPerCell = std::max(maxPointsPerCell, pointsPerCell[i]);
     }
     //
     if (rxyz != NULL) free(rxyz);

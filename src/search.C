@@ -75,8 +75,8 @@ void MeshBlock::search(void) {
           xd[j] = 0;
           for (k = 0; k < 3; k++)
             xd[j] += (x[i3 + k] - obq->xc[k]) * obq->vec[j][k];
-          xmin[j] = min(xmin[j], xd[j]);
-          xmax[j] = max(xmax[j], xd[j]);
+          xmin[j] = std::min(xmin[j], xd[j]);
+          xmax[j] = std::max(xmax[j], xd[j]);
         }
         for (j = 0; j < 3; j++) {
           xd[j] = (xmax[j] + xmin[j]) * 0.5;
@@ -130,8 +130,8 @@ void MeshBlock::search(void) {
     for (m = 0; m < nvert; m++) {
       i3 = 3 * (vconn[n][nvert * i + m] - BASE);
       for (j = 0; j < 3; j++) {
-        xmin[j] = min(xmin[j], x[i3 + j]);
-        xmax[j] = max(xmax[j], x[i3 + j]);
+        xmin[j] = std::min(xmin[j], x[i3 + j]);
+        xmax[j] = std::max(xmax[j], x[i3 + j]);
       }
     }
     //

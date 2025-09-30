@@ -433,7 +433,7 @@ PyObject* PyTioga_test_interpolation(PyTioga* self, PyObject* args){
     int id_max_interp_error;
     double max_interp_error=0.0;
     for(j=0;j<nproc;j++){
-      max_interp_error = max(max_interp_error,interp_error[j]);
+      max_interp_error = std::max(max_interp_error,interp_error[j]);
       if(interp_error[j] > 1.0e-10){
         printf("\n interpol. error per proc= %e at proc %d \n", interp_error[j],j);
       }

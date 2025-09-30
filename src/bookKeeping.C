@@ -515,8 +515,8 @@ void MeshBlock::getStats(int mstats[3]) {
   }
 
   if(special) {
-    printf("%2d : %9d %16.8e %16.8e %16.8e\n", myid, special, 
-	   x[special*3+0],x[special*3+1],x[special*3+2]);
+    //printf("%2d : %9d %16.8e %16.8e %16.8e\n", myid, special, 
+	  // x[special*3+0],x[special*3+1],x[special*3+2]);
   }
 }
 
