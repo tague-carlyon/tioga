@@ -7,6 +7,8 @@
 #ifdef USE_CUDA
 #include "cuda_functions.h"
 #endif
+#undef max
+#undef min
 
 void PyTioga_dealloc(PyTioga* self){
   //

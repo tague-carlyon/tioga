@@ -22,6 +22,8 @@
 #define ROW 0
 #define COLUMN 1
 #define NFRAC 1331
+#undef max
+#undef min
 
 extern "C" 
 {

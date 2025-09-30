@@ -21,6 +21,8 @@
 #include <assert.h>
 #define ROW 0
 #define COLUMN 1
+#undef max
+#undef min
 
 extern "C" 
 {

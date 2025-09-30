@@ -21,6 +21,9 @@
 #include "CartBlock.h"
 #include "CartGrid.h"
 #include <assert.h>
+#undef max
+#undef min
+
 extern "C" {
   void deallocateLinkList(DONORLIST *temp);
   void deallocateLinkList2(INTEGERLIST *temp);
