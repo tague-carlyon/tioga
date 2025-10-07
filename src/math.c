@@ -9,7 +9,7 @@
 
 void solvec(double **a,double *b,int *iflag,int n)
 {
-  int i,j,k,l,flag,temp1;
+  int i,j,k,l,flag;
   double fact;
   double temp;
   double sum;
