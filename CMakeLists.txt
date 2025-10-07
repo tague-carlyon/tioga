@@ -10,24 +10,20 @@ option(TIOGA_ENABLE_TIMERS "Track timing information for TIOGA (default: off)" O
 option(TIOGA_OUTPUT_STATS "Output statistics for TIOGA holecutting (default: off)" OFF)
 option(BUILD_PYTHON "Build python wrapper (default: on)" on)
 option(BUILD_CUDA_SUPPORT "Build with CUDA support (default: on)" on)
+option(DEBUG "Build with debug flags (default: off)" on)
 
 find_package(MPI REQUIRED)
-
-set(MPI_CXX_COMPILE_FLAGS "${MPI_CXX_COMPILE_FLAGS} -fpic -O3 -flto -funroll-loops -ftree-vectorize -march=native")
-set(MPI_C_COMPILE_FLAGS "${MPI_C_COMPILE_FLAGS} -fpic -O3 -flto -funroll-loops -ftree-vectorize -march=native")
-
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${MPI_C_COMPILE_FLAGS} ${C_DEFAULT_FLAGS} -fpic -O3 -flto -funroll-loops -ftree-vectorize -march=native")
-SET(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${MPI_Fortran_COMPILE_FLAGS} ${Fortran_DEFAULT_FLAGS} -O5")
-SET(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} ${MPI_CXX_COMPILEFLAGS} ${CXX_DEFAULT_FLAGS} -fpic -O3 -flto -funroll-loops -ftree-vectorize -march=native")
-
-set(CMAKE_CXX_STANDARD 11)
-
-# Set some default compilation settings for Fortran compiler
-if (${CMAKE_Fortran_COMPILER_ID} STREQUAL "GNU")
-  set(CMAKE_Fortran_FLAGS
-    "${CMAKE_Fortran_FLAGS} -O5 -fbounds-check -fbacktrace -fdefault-real-8 -ffree-line-length-none -fPIC")
-elseif (${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
-  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -r8 -double_size 128 -fPIC")
+if(DEBUG)
+  message(STATUS "Debug mode enabled")
+  set(CMAKE_BUILD_TYPE Debug)
+  set(CMAKE_C_FLAGS "-fpic -O0 -g3 -Wall -Wextra -Wpedantic")
+  set(CMAKE_CXX_FLAGS "-fpic -O0 -g3 -Wall -Wextra -Wpedantic")
+  add_compile_definitions(DEBUG)
+else()
+  message(STATUS "Release mode enabled")
+  SET(CMAKE_C_FLAGS "-O3 -flto -funroll-loops -ftree-vectorize -march=native")
+  SET(CMAKE_CXX_FLAGS "-O3 -flto -funroll-loops -ftree-vectorize -march=native")
+  set(CMAKE_BUILD_TYPE Release)
 endif()
 
 if (APPLE)
