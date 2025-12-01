@@ -13,7 +13,7 @@ option(ZARATAN "Building on Zaratan system" OFF)
 #
 # Find Libraries
 #
-find_package(MPI REQUIRED)
+find_package(MPI REQUIRED COMPONENTS C CXX Fortran)
 include_directories(${MPI_INCLUDE_PATH})
 
 if(NOT DEBUG)
