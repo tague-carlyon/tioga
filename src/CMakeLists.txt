@@ -1,7 +1,6 @@
 set(TIOGA_SOURCES
   # Fortran sources
   kaiser.f
-  cellVolume.f90
   median.F90
 
   # C sources

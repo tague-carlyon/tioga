@@ -3,12 +3,11 @@ cmake_minimum_required(VERSION 3.5)
 project(TIOGA CXX C Fortran)
 
 option(BUILD_SHARED_LIBS "Build shared libraries (default: off)" off)
-option(BUILD_TIOGA_EXE "Build tioga driver code (default: off)" off)
-option(BUILD_GRIDGEN_EXE "Build grid generator code (default: off)" off)
+
 option(TIOGA_HAS_NODEGID "Support node global IDs (default: on)" off)
 option(TIOGA_ENABLE_TIMERS "Track timing information for TIOGA (default: off)" OFF)
 option(TIOGA_OUTPUT_STATS "Output statistics for TIOGA holecutting (default: off)" OFF)
-option(BUILD_PYTHON "Build python wrapper (default: on)" on)
+
 option(BUILD_CUDA_SUPPORT "Build with CUDA support (default: on)" on)
 option(DEBUG "Build with debug flags (default: off)" on)
 
@@ -50,18 +49,9 @@ endif()
 # Always build libtioga
 add_subdirectory(src)
 
-# Optionally build driver exe and gridGen if the user requests it
-if (BUILD_TIOGA_EXE)
-  add_subdirectory(driver)
-endif()
 
-if (BUILD_GRIDGEN_EXE)
-    add_subdirectory(gridGen)
-endif()
 
-if (BUILD_PYTHON)
-    add_subdirectory(python)
-endif()
+
 
 # CMake installation configuration
 
