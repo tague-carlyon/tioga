@@ -6,9 +6,9 @@
 #define CODETYPES_H
 
 #define MPICH_SKIP_MPICXX
-#include<stdio.h>
-#include<stdlib.h>
-#include<math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 #include "mpi.h"
 /*====================================================================*/
 /*  Floating point definition                                         */
