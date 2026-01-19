@@ -9,6 +9,10 @@ install*
 *.vscode
 *.swp
 
+MakeFile
+Makefile
+makefile
+
 
 GPATH
 GRTAGS
