@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(TIOGA CXX C Fortran)
+project(TIOGA CXX)
 
 option(BUILD_SHARED_LIBS "Build shared libraries (default: off)" off)
 

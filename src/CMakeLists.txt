@@ -1,7 +1,7 @@
 set(TIOGA_SOURCES
-  # Fortran sources
-  kaiser.f
-  median.F90
+  # C++ replacements for Fortran sources
+  kaiser.cpp
+  median.cpp
 
   # C sources
   buildADTrecursion.c
