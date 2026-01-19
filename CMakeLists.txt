@@ -12,6 +12,8 @@ option(BUILD_CUDA_SUPPORT "Build with CUDA support (default: on)" on)
 option(DEBUG "Build with debug flags (default: off)" on)
 
 find_package(MPI REQUIRED)
+# Always build libtioga
+add_subdirectory(src)
 if(DEBUG)
     message(STATUS "Debug mode enabled")
     set(CMAKE_BUILD_TYPE Debug)
@@ -45,13 +47,6 @@ endif()
 if (TIOGA_OUTPUT_STATS)
     add_definitions(-DTIOGA_OUTPUT_STATS)
 endif()
-
-# Always build libtioga
-add_subdirectory(src)
-
-
-
-
 
 # CMake installation configuration
 

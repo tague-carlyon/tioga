@@ -9,7 +9,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "mpi.h"
+// Use CMake-provided MPI includes
+#include <mpi.h>
 /*====================================================================*/
 /*  Floating point definition                                         */
 /*====================================================================*/

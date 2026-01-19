@@ -67,9 +67,16 @@ void MeshBlock::getMBDonorPktSizes
       int ii = isearch[3*i];
       nints[ii] += 4;
       nreals[ii]+=2;
+      }
     }
+    if( d_interpList){
+      freeGPUInterpList(d_interpList);
+    }
+    else{
+      freeGPUInterpList(d_interpList);
+    }
+    TIOGA_FREE(d_interpList);
   }
-}
 
 void MeshBlock::getMBDonorPackets
 (
