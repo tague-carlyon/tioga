@@ -12,6 +12,24 @@ option(BUILD_CUDA_SUPPORT "Build with CUDA support (default: on)" on)
 option(DEBUG "Build with debug flags (default: off)" on)
 
 find_package(MPI REQUIRED)
+
+# Centralize TIOGA compile definitions
+set(TIOGA_DEFINITIONS "")
+if(TIOGA_HAS_NODEGID)
+    list(APPEND TIOGA_DEFINITIONS "-DTIOGA_HAS_NODEGID")
+endif()
+if(TIOGA_ENABLE_TIMERS)
+    list(APPEND TIOGA_DEFINITIONS "-DTIOGA_ENABLE_TIMERS")
+endif()
+if(TIOGA_OUTPUT_STATS)
+    list(APPEND TIOGA_DEFINITIONS "-DTIOGA_OUTPUT_STATS")
+endif()
+
+# Standardize installation paths
+set(TIOGA_INSTALL_INCLUDE_DIR "include/tioga")
+set(TIOGA_INSTALL_LIB_DIR "lib/tioga")
+set(TIOGA_INSTALL_BIN_DIR "bin/tioga")
+
 # Always build libtioga
 add_subdirectory(src)
 if(DEBUG)
@@ -32,20 +50,8 @@ if (APPLE)
 endif()
 
 if (BUILD_SHARED_LIBS)
-    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${TIOGA_INSTALL_LIB_DIR}")
     set(CMAKE_INSTALL_RPATH_USE_LINK_PATH ON)
-endif()
-
-if (TIOGA_HAS_NODEGID)
-    add_definitions(-DTIOGA_HAS_NODEGID)
-endif()
-
-if (TIOGA_ENABLE_TIMERS)
-    add_definitions(-DTIOGA_ENABLE_TIMERS)
-endif()
-
-if (TIOGA_OUTPUT_STATS)
-    add_definitions(-DTIOGA_OUTPUT_STATS)
 endif()
 
 # CMake installation configuration
@@ -56,8 +62,8 @@ install(EXPORT TIOGALibraries
 
 # Create TIOGA config so that other codes can find TIOGA
 include(CMakePackageConfigHelpers)
-set(INCLUDE_INSTALL_DIR include/)
-set(LIB_INSTALL_DIR lib/)
+set(INCLUDE_INSTALL_DIR ${TIOGA_INSTALL_INCLUDE_DIR})
+set(LIB_INSTALL_DIR ${TIOGA_INSTALL_LIB_DIR})
 configure_package_config_file(
                                 cmake/TIOGAConfig.cmake.in
                                 ${CMAKE_CURRENT_BINARY_DIR}/TIOGAConfig.cmake

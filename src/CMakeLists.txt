@@ -53,7 +53,7 @@ if(BUILD_CUDA_SUPPORT)
   set(CUDA_SEPARABLE_COMPILATION ON CACHE INTERNAL "Compile GPU code separately")
   set(CUDA_PROPAGATE_HOST_FLAGS OFF CACHE INTERNAL "Do not propagate host flags")
   list(APPEND CUDA_OPTS "-O3" "--compile -march=native")
-  list(APPEND TIOGA_DEFINITIONS "-DUSE_CUDA")
+  list(APPEND TIOGA_DEFINITIONS "${TIOGA_DEFINITIONS}" "-DUSE_CUDA")
   list(APPEND CUDA_OPTS --compiler-options -fPIC)
 
   # Get all the CUDA files
@@ -65,7 +65,7 @@ if(BUILD_CUDA_SUPPORT)
     get_filename_component(cu_file_name ${cu_file} NAME_WE)
     add_library(${cu_file_name}_obj OBJECT ${cu_file})
     target_compile_options(${cu_file_name}_obj PRIVATE ${CUDA_OPTS})
-    target_include_directories(${cu_file_name}_obj PUBLIC ${MPI_CXX_HEADER_DIR})
+    target_include_directories(${cu_file_name}_obj PUBLIC ${MPI_CXX_INCLUDE_PATH})
     list(APPEND cuda_objects $<TARGET_OBJECTS:${cu_file_name}_obj>)
   endforeach()
 
@@ -74,33 +74,29 @@ if(BUILD_CUDA_SUPPORT)
   target_compile_definitions(tioga PRIVATE ${TIOGA_DEFINITIONS})
   target_include_directories(tioga
       PUBLIC
-          $<INSTALL_INTERFACE:include/tioga>
-          $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../src>
+          $<INSTALL_INTERFACE:${TIOGA_INSTALL_INCLUDE_DIR}>
+          $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+          PRIVATE ${MPI_CXX_INCLUDE_PATH}
   )
   target_link_libraries(tioga MPI::MPI_CXX ${CMAKE_DL_LIBS} CUDA::cudart)
 else()
   message(STATUS "BUILDING WITHOUT CUDA SUPPORT")
   add_library(tioga STATIC ${TIOGA_SOURCES})
   target_compile_definitions(tioga PRIVATE ${TIOGA_DEFINITIONS})
-  target_include_directories(tioga PUBLIC ${MPI_C_INCLUDE_PATH})
+  target_include_directories(tioga
+      PUBLIC
+          $<INSTALL_INTERFACE:${TIOGA_INSTALL_INCLUDE_DIR}>
+          $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+          PRIVATE ${MPI_CXX_INCLUDE_PATH}
+  )
   target_link_libraries(tioga MPI::MPI_CXX ${CMAKE_DL_LIBS})
-endif()
-
-if(MPI_COMPILE_FLAGS)
-  set_target_properties(tioga PROPERTIES
-    COMPILE_FLAGS "${MPI_COMPILE_FLAGS}")
-endif()
-
-if(MPI_LINK_FLAGS)
-  set_target_properties(tioga PROPERTIES
-    LINK_FLAGS "${MPI_LINK_FLAGS}")
 endif()
 
 install(TARGETS tioga
   EXPORT "${CMAKE_PROJECT_NAME}Libraries"
-  RUNTIME DESTINATION bin/tioga
-  ARCHIVE DESTINATION lib/tioga
-  LIBRARY DESTINATION lib/tioga)
+  RUNTIME DESTINATION ${TIOGA_INSTALL_BIN_DIR}
+  ARCHIVE DESTINATION ${TIOGA_INSTALL_LIB_DIR}
+  LIBRARY DESTINATION ${TIOGA_INSTALL_LIB_DIR})
 
 install(FILES ${TIOGA_HEADERS}
-  DESTINATION include/tioga)
+  DESTINATION ${TIOGA_INSTALL_INCLUDE_DIR})
