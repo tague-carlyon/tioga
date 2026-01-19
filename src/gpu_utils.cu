@@ -12,7 +12,7 @@ __global__ void vec_mult(double* v1, double* v2, double *result, int pts){
 }
 
 void tmp_update(int pts, double* q){
-
+  
   printf("This is the tmp_update function from update.cu\n");
 }
 
