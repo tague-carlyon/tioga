@@ -65,7 +65,7 @@ if(BUILD_CUDA_SUPPORT)
     get_filename_component(cu_file_name ${cu_file} NAME_WE)
     add_library(${cu_file_name}_obj OBJECT ${cu_file})
     target_compile_options(${cu_file_name}_obj PRIVATE ${CUDA_OPTS})
-    target_include_directories(${cu_file_name}_obj PUBLIC ${MPI_C_INCLUDE_PATH})
+    target_include_directories(${cu_file_name}_obj PUBLIC ${MPI_CXX_HEADER_DIR})
     list(APPEND cuda_objects $<TARGET_OBJECTS:${cu_file_name}_obj>)
   endforeach()
 
